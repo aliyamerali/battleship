@@ -22,8 +22,21 @@ RSpec.describe Ship do
       expect(ship.sunk?).to eq(false)
     end
 
+    it 'returns true when health is zero' do
+      3.times { ship.hit }
+      expect(ship.sunk?).to eq(true)
+    end
+
   end
 
-  
+  describe "#hit" do
+    ship = Ship.new("Cruiser", 3)
+
+    it 'reduces health by one' do
+      ship.hit
+      expect(ship.health).to eq(2)
+    end
+
+  end
 
 end
