@@ -4,7 +4,7 @@ class Cell
   def initialize(cell_coordinates)
     @coordinate = cell_coordinates
     @ship = nil
-    @fired_upon = false
+    @fired_upon = false # REFACTOR: make fired_upon? instance var
   end
 
   def empty?
@@ -15,6 +15,7 @@ class Cell
     @ship = ship
   end
 
+  # REFACTOR: Can be swept under fired_upon? instance var
   def fired_upon?
     @fired_upon
   end

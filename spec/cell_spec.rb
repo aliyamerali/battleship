@@ -13,6 +13,8 @@ RSpec.describe Cell do
     it "returns coordinate attribute" do
       expect(cell.coordinate).to eq("A3")
     end
+
+    # REFACTOR: Add fired_upon? test up here
   end
 
   describe "#empty?" do
@@ -39,6 +41,7 @@ RSpec.describe Cell do
     cell2 = Cell.new("B1")
     ship = Ship.new("Cruiser", 3)
 
+    # REFACTOR: Move test to under #initialize
     it "fired_upon? returns correct boolean" do
       cell1.fire_upon
       expect(cell1.fired_upon?).to eq(true)
