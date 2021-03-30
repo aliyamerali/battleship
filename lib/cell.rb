@@ -26,4 +26,21 @@ class Cell
     end
   end
 
+  # Render has a default value of false, and passing in 'true' will
+  # show placement of ship.
+  def render(value = false)
+    # Added the "S" case first since it's more stringent than the "." case
+    if value == true && empty? == false && fired_upon? == false
+      "S"
+    elsif fired_upon? == false
+      "."
+    elsif fired_upon? && empty?
+      "M"
+    elsif fired_upon? && empty? == false && ship.sunk? == false
+      "H"
+    elsif fired_upon? && ship.sunk?
+      "X"
+    end
+  end
+
 end

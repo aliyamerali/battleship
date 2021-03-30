@@ -1,5 +1,6 @@
 require './lib/cell'
 require './lib/ship'
+require 'pry'
 
 RSpec.describe Cell do
 
@@ -58,33 +59,37 @@ RSpec.describe Cell do
     cell2 = Cell.new("B1")
     ship = Ship.new("Cruiser", 3)
 
-    xit "returns \`.`` if a cell has not been fired on" do
+    it "returns \'S\' if optional true parameter is passed" do
+      cell2.place_ship(ship)
+      expect(cell2.render(true)).to eq("S")
+    end
+
+    it "returns \`.`` if a cell has not been fired on" do
       expect(cell1.render).to eq(".")
     end
 
-    xit "returns \`M` if a cell has been fired on and does not contain a ship" do
+    it "returns \`M` if a cell has been fired on and does not contain a ship" do
       cell1.fire_upon
 
       expect(cell1.render).to eq("M")
     end
 
-    xit "returns \'H' if a cell has been fired on and it contains a ship" do
+    it "returns \'H' if a cell has been fired on and it contains a ship" do
       cell1.place_ship(ship)
       cell1.fire_upon
 
       expect(cell1.render).to eq("H")
     end
 
-    xit "returns \`X` if a cell has been fired on and its ship has been sunk" do
+    # This test still needs to pass
+    it "returns \`X` if a cell has been fired on and its ship has been sunk" do
       cell1.place_ship(ship)
       cell1.fire_upon
       ship.hit #Shortcut to reduce ship health manually to test sunk #render behavior
-      ship.hit
-
+      # Note that #fire_upon was also called in the above test, so only 2 more hits are needed to sink
       expect(cell1.render).to eq("X")
     end
 
-  end
 
   end
 
