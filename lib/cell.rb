@@ -30,7 +30,7 @@ class Cell
   # show placement of ship.
   def render(value = false)
     # Added the "S" case first since it's more stringent than the "." case
-    if value == true && empty? == false
+    if value == true && empty? == false && fired_upon? == false
       "S"
     elsif fired_upon? == false
       "."
