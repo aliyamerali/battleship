@@ -17,8 +17,12 @@ class Board
       end
     end
 
-    @cells = Hash.new
 
+    @cells = Hash.new
+    # We iterate over the coordinates array to populate the cells hash
+    coordinates.each do |coordinate|
+      @cells[coordinate] = Cell.new(coordinate)
+    end
 
   end
 
