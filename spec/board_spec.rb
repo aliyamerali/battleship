@@ -21,4 +21,16 @@ RSpec.describe Board do
 
   end
 
+  describe "#valid_coordinate?" do
+    board = Board.new
+
+    it 'returns true for a coordinate in the cells hash' do
+      expect(board.valid_coordinate?("A1")).to eq(true)
+    end
+
+    it 'returns true for a coordinate in the cells hash' do
+      expect(board.valid_coordinate?("Z1")).to eq(false)
+    end
+  end
+
 end
