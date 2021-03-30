@@ -26,4 +26,16 @@ class Cell
     end
   end
 
+  def render(value = false)
+    if fired_upon? == false
+      "."
+    elsif fired_upon? && empty?
+      "M"
+    elsif fired_upon? && empty? == false && ship.sunk? == false
+      "H"
+    elsif fired_upon? && ship.sunk?
+      "X"
+    end
+  end
+
 end
