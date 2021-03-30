@@ -53,4 +53,39 @@ RSpec.describe Cell do
     end
   end
 
+  describe "#render" do
+    cell1 = Cell.new("A3")
+    cell2 = Cell.new("B1")
+    ship = Ship.new("Cruiser", 3)
+
+    xit "returns \`.`` if a cell has not been fired on" do
+      expect(cell1.render).to eq(".")
+    end
+
+    xit "returns \`M` if a cell has been fired on and does not contain a ship" do
+      cell1.fire_upon
+
+      expect(cell1.render).to eq("M")
+    end
+
+    xit "returns \'H' if a cell has been fired on and it contains a ship" do
+      cell1.place_ship(ship)
+      cell1.fire_upon
+
+      expect(cell1.render).to eq("H")
+    end
+
+    xit "returns \`X` if a cell has been fired on and its ship has been sunk" do
+      cell1.place_ship(ship)
+      cell1.fire_upon
+      ship.hit #Shortcut to reduce ship health manually to test sunk #render behavior
+      ship.hit
+
+      expect(cell1.render).to eq("X")
+    end
+
+  end
+
+  end
+
 end
