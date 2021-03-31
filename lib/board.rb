@@ -30,4 +30,10 @@ class Board
     @cells[coordinate] != nil
   end
 
+  def valid_placement?(ship, coordinates)
+    ship.length == coordinates.count #ship @length should be same as count of coordinates
+
+    # either rows or columns needs to increment by 1
+    # if rows.include?(coordinates[0][0]) 
+  end
 end
