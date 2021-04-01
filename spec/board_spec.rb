@@ -40,13 +40,10 @@ RSpec.describe Board do
 
     it 'validates that number of coordinates = length of the ship' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
-    end
-
-    it 'validates that number of coordinates = length of the ship' do
       expect(board.valid_placement?(cruiser, ["A3"])).to eq(false)
     end
 
-    it 'validates that coordinates are consecutive either in rows or cols' do
+    it 'returns false when improper coordinates are provided' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
       expect(board.valid_placement?(cruiser, ["A1", "B1", "C1"])).to eq(true)
       expect(board.valid_placement?(cruiser, ["A3", "A2", "A1"])).to eq(false)
@@ -78,6 +75,22 @@ RSpec.describe Board do
     it 'returns false if rows change' do
       expect(board.check_static(["A", "B", "C"])).to eq(false)
     end
+  end
+
+  describe "#overlap?" do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+    submarine = Ship.new("Submarine", 2)
+    coordinates = ["A1", "A2", "A3"]
+
+    it 'returns false if no overlap' do
+      expect(board.overlap?(coordinates)).to eq(false)
+    end
+    it 'returns true if there is overlap' do
+      board.place(cruiser, coordinates)
+      expect(board.overlap?(coordinates)).to eq(true)
+    end
+
   end
 
   describe "#place" do
