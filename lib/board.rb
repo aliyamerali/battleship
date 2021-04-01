@@ -80,4 +80,8 @@ class Board
     parsed_coordinates.all? { |coordinate| coordinate == parsed_coordinates[0]}
   end
 
+  def place(ship, coordinates)
+    # iterate over each coordinate pair and #place_ship using @cells hash
+  end
+
 end
