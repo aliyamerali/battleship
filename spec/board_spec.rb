@@ -99,7 +99,7 @@ RSpec.describe Board do
     end
 
     it 'can place a submarine on open cells' do
-      board.place(cruiser, ["B2", "C2"])
+      board.place(submarine, ["B2", "C2"])
       expect(cell_4.ship).to be_instance_of(Ship)
       expect(cell_5.ship.name).to eq("Submarine")
     end
