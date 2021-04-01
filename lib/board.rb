@@ -82,6 +82,12 @@ class Board
 
   def place(ship, coordinates)
     # iterate over each coordinate pair and #place_ship using @cells hash
+    #Add an all statement here to confirm that all coordiantes pass valid_coordinate
+    if valid_placement?(ship, coordinates)
+      coordinates.each do |coordinate|
+        @cells[coordinate].place_ship(ship)
+      end
+    end
   end
 
 end
