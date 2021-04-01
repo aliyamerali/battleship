@@ -38,16 +38,19 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
-    xit 'validates that number of coordinates = length of the ship' do
+    it 'validates that number of coordinates = length of the ship' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
     end
 
-    xit 'validates that number of coordinates = length of the ship' do
+    it 'validates that number of coordinates = length of the ship' do
       expect(board.valid_placement?(cruiser, ["A3"])).to eq(false)
     end
 
     it 'validates that coordinates are consecutive either in rows or cols' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
+      expect(board.valid_placement?(cruiser, ["A1", "B1", "C1"])).to eq(true)
+      expect(board.valid_placement?(cruiser, ["A3", "A2", "A1"])).to eq(false)
+      expect(board.valid_placement?(cruiser, ["C4", "C3", "C1"])).to eq(false)
     end
   end
 
