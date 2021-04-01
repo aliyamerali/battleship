@@ -119,5 +119,39 @@ RSpec.describe Board do
 
   end
 
+  describe '#render' do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+    submarine = Ship.new("Submarine", 2)
+
+    #TESTING TEMPLATE:   expect{board.render}.to output().to_stdout
+    it 'prints an empty board to the screen when called at game start' do
+      expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+      expect{board.render(true)}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with hidden ships when passed value true' do
+      board.place(cruiser, ["A1", "A2", "A3"])
+      expect{board.render}.to output("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with misses marked' do
+      board.cells["B1"].fire_upon
+
+      expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with hits marked'do
+      board.cells["A1"].fire_upon
+      expect{board.render}.to output("  1 2 3 4 \nA H . . . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with sunk ships marked' do
+      board.cells["A2"].fire_upon
+      board.cells["A3"].fire_upon
+      expect{board.render}.to output("  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+  end
+
 
 end
