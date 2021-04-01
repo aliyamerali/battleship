@@ -80,4 +80,31 @@ RSpec.describe Board do
     end
   end
 
+  describe "#place" do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+    submarine = Ship.new("Submarine", 2)
+    # Reminder that cells is a hash, and we're querying keys
+    cell_1 = board.cells["A1"]
+    cell_2 = board.cells["A2"]
+    cell_3 = board.cells["A3"]
+    cell_4 = board.cells["B2"]
+    cell_5 = board.cells["C2"]
+
+    it 'can place a cruiser on open cells' do
+      board.place(cruiser, ["A1", "A2", "A3"])
+      expect(cell_1.ship).to be_instance_of(Ship)
+      expect(cell_2.ship.name).to eq("Cruiser")
+      expect(cell_3.ship.length).to eq(3)
+    end
+
+    it 'can place a submarine on open cells' do
+      board.place(cruiser, ["B2", "C2"])
+      expect(cell_4.ship).to be_instance_of(Ship)
+      expect(cell_5.ship.name).to eq("Submarine")
+    end
+
+  end
+
+
 end
