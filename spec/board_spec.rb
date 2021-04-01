@@ -46,7 +46,7 @@ RSpec.describe Board do
       expect(board.valid_placement?(cruiser, ["A3"])).to eq(false)
     end
 
-    xit 'validates that coordinates are consecutive either in rows or cols' do
+    it 'validates that coordinates are consecutive either in rows or cols' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
     end
   end
@@ -58,6 +58,20 @@ RSpec.describe Board do
 
     it 'returns true for consecutive letters on board' do
       expect(board.check_consecutive(cruiser, [1, 2, 3])).to eq(true)
+    end
+  end
+
+  describe "#check_static" do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+    submarine = Ship.new("Submarine", 2)
+
+    it 'returns true if columns do not change' do
+      expect(board.check_static([2, 2, 2])).to eq(true)
+    end
+
+    it 'returns false if rows change' do
+      expect(board.check_static(["A", "B", "C"])).to eq(false)
     end
   end
 
