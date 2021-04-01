@@ -1,5 +1,11 @@
+require_relative 'board'
+require_relative 'cell'
+require_relative 'ship'
+require 'pry'
+
 class Board
-  attr_reader :cells
+  # Note: added rows and columns for pry session
+  attr_reader :cells, :rows, :columns
 
   def initialize
     # Making column and row dimension as variables
@@ -100,4 +106,9 @@ class Board
     end
   end
 
+  def render(value = false)
+
+    #@cells.each do |cell|
+  end
+  # binding.pry
 end
