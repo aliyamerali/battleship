@@ -31,7 +31,7 @@ class Board
   end
 
   def valid_placement?(ship, coordinates)
-    # put in an if
+    # put in an if statement here to encapsulate whole method block
     # ship.length == coordinates.count #ship @length should be same as count of coordinates
 
     # This section parses the input coordinates and creates
@@ -68,10 +68,12 @@ class Board
       consecutive_coordinates << row
     end
 
+    # BUG HERE: columns are being generated as ints
+    # but are compared against strings when given full coordinates
     @columns.to_a.each_cons(ship.length) do |column|
       consecutive_coordinates << column
     end
-
+    # require 'pry'; binding.pry
     consecutive_coordinates.include?(parsed_coordinates)
     #expect to return a boolean true or false
   end
