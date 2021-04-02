@@ -22,7 +22,7 @@ describe Game do
     game = Game.new
 
     it 'randomly selects horizontal or vertical' do
-      expect(game.random_coordinate_generator).to eq(0 || 1)
+      expect(game.random_coordinate_generator).to be_between(0, 1)
     end
   end
 end
