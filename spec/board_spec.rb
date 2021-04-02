@@ -91,11 +91,11 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
 
     it 'returns true if ship is horizontal' do
-      expect(board.is_horizontal?(cruiser, ["A1", "B1", "C1"]))
+      expect(board.is_horizontal?(cruiser, ["A1", "B1", "C1"])).to eq(true)
     end
 
     it 'returns true is ship is vertical' do
-      expect(board.is_vertical?(cruiser, ["B2", "B3", "B4"]))
+      expect(board.is_vertical?(cruiser, ["B2", "B3", "B4"])).to eq(true)
     end
 
   end
