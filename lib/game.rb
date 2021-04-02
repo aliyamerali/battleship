@@ -18,14 +18,15 @@ class Game
     puts "I have laid out my ships on the grid."
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
+    
     @player_board.render
     puts "Enter the squares for the Cruiser (3 spaces): "
-
     @player_board.place(@cruiser, get_user_coordinates(@cruiser))
-
     @player_board.render(true)
+
     puts "Enter the squares for the Submarine (2 spaces): "
-    get_user_coordinates(@sub)
+    @player_board.place(@sub, get_user_coordinates(@sub))
+    @player_board.render(true)
   end
 
   def get_user_coordinates(ship)
