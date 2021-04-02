@@ -28,8 +28,20 @@ RSpec.describe Board do
       expect(board.valid_coordinate?("A1")).to eq(true)
     end
 
-    it 'returns true for a coordinate in the cells hash' do
+    it 'returns false for a coordinate outside the cells hash' do
       expect(board.valid_coordinate?("Z1")).to eq(false)
+    end
+  end
+
+  describe "#valid_coordinates?" do
+    board = Board.new
+
+    it 'returns true for an array of coordinates in the cells hash' do
+      expect(board.valid_coordinates?(["A1", "A2", "A3"])).to eq(true)
+    end
+
+    it 'returns false for an array of coordinates outside the cells hash' do
+      expect(board.valid_coordinates?(["Z1", "G5", "K6"])).to eq(false)
     end
   end
 
@@ -90,7 +102,22 @@ RSpec.describe Board do
       board.place(cruiser, coordinates)
       expect(board.overlap?(coordinates)).to eq(true)
     end
+  end
 
+  describe "#parse_rows and #parse_columns methods" do
+    board = Board.new
+    coordinates1 = ["A1", "A2", "A3"]
+    coordinates2 = ["B1", "Q9", "L5"]
+
+    it '#parse_rows returns an array of strings with row names' do
+      expect(board.parse_rows(coordinates1)).to eq(["A", "A", "A"])
+      expect(board.parse_rows(coordinates2)).to eq(["B", "Q", "L"])
+    end
+
+    it '#parse_columns returns an array of integers with column names' do
+      expect(board.parse_columns(coordinates1)).to eq([1, 2, 3])
+      expect(board.parse_columns(coordinates2)).to eq([1, 9, 5])
+    end
   end
 
   describe "#place" do
@@ -117,6 +144,39 @@ RSpec.describe Board do
       expect(cell_5.ship.name).to eq("Submarine")
     end
 
+  end
+
+  xdescribe '#render' do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+
+    #TESTING TEMPLATE:   expect{board.render}.to output().to_stdout
+    it 'prints an empty board to the screen when called at game start' do
+      expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+      expect{board.render(true)}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with hidden ships when passed value true' do
+      board.place(cruiser, ["A1", "A2", "A3"])
+      expect{board.render(true)}.to output("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with misses marked' do
+      board.cells["B1"].fire_upon
+
+      expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with hits marked'do
+      board.cells["A1"].fire_upon
+      expect{board.render}.to output("  1 2 3 4 \nA H . . . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
+
+    it 'prints a board with sunk ships marked' do
+      board.cells["A2"].fire_upon
+      board.cells["A3"].fire_upon
+      expect{board.render}.to output("  1 2 3 4 \nA X X X . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
+    end
   end
 
 
