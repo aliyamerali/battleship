@@ -10,16 +10,21 @@ RSpec.describe Board do
       expect(board).to be_instance_of(Board)
     end
 
-    it '@cells is a hash and is composed of 16 pairs' do
-      expect(board.cells).to be_instance_of(Hash)
-      expect(board.cells.length).to eq(16)
-    end
-
     it 'can access cell objects in @cells hash' do
       expect(board.cells["A1"]).to be_instance_of(Cell)
     end
 
   end
+
+  describe "#generate_board_hash" do
+    board = Board.new
+
+    it 'returns @cells hash and is composed of 16 pairs' do
+      expect(board.cells).to be_instance_of(Hash)
+      expect(board.cells.length).to eq(16)
+    end
+  end
+
 
   describe "#valid_coordinate?" do
     board = Board.new
@@ -50,10 +55,6 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
-    it 'validates that number of coordinates = length of the ship' do
-      expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
-      expect(board.valid_placement?(cruiser, ["A3"])).to eq(false)
-    end
 
     it 'returns false when improper coordinates are provided' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
@@ -65,27 +66,62 @@ RSpec.describe Board do
     end
   end
 
-  describe "#check_consecutive" do
+  describe "#player_input_valid?" do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+    sub = Ship.new("Submarine", 2)
+
+    it 'validates that number of coordinates = length of the ship' do
+      expect(board.player_input_valid?(cruiser, ["A1", "A2", "A3"])).to eq(true)
+      expect(board.player_input_valid?(cruiser, ["A3"])).to eq(false)
+    end
+
+    it 'returns true if coordinates valid and spaces open' do
+      expect(board.player_input_valid?(cruiser, ["A1", "A2", "A3"])).to eq(true)
+    end
+
+    it 'returns false if spot occupied on board' do
+      board.place(cruiser, ["A1", "B1", "C1"])
+      expect(board.player_input_valid?(sub, ["B1", "B2"])).to eq(false)
+    end
+  end
+
+  describe "#is_vertical? and #is_horizontal?" do
+    board = Board.new
+    cruiser = Ship.new("Cruiser", 3)
+
+    it 'returns true if ship is horizontal' do
+      expect(board.is_horizontal?(cruiser, ["A1", "B1", "C1"])).to eq(true)
+    end
+
+    it 'returns true is ship is vertical' do
+      expect(board.is_vertical?(cruiser, ["B2", "B3", "B4"])).to eq(true)
+    end
+
+  end
+
+
+  describe "#consecutive?" do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
     it 'returns true for consecutive letters on board' do
-      expect(board.check_consecutive(cruiser, [1, 2, 3])).to eq(true)
+      expect(board.consecutive?(cruiser, [1, 2, 3])).to eq(true)
     end
   end
 
-  describe "#check_static" do
+  describe "#same?" do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
     it 'returns true if columns do not change' do
-      expect(board.check_static([2, 2, 2])).to eq(true)
+      expect(board.same?([2, 2, 2])).to eq(true)
     end
 
     it 'returns false if rows change' do
-      expect(board.check_static(["A", "B", "C"])).to eq(false)
+      expect(board.same?(["A", "B", "C"])).to eq(false)
     end
   end
 
