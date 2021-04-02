@@ -28,18 +28,22 @@ class Board
     coordinates.each do |coordinate|
       @cells[coordinate] = Cell.new(coordinate)
     end
-
   end
 
   def valid_coordinate?(coordinate)
     @cells[coordinate] != nil
   end
 
+#ADD helper method to run valid_coordinate? on array of coordinates
+  def valid_coordinates?(coordinates)
+    coordinates.all? { |coord| valid_coordinate?(coord) }
+  end
+
   def valid_placement?(ship, coordinates)
     # Method checks whether number of elements is equal to ship length
     # and then verifies that all coordinates are valid
     if ship.length == coordinates.count && !overlap?(coordinates) # overlap? is negated
-      if coordinates.all? { |coord| valid_coordinate?(coord) }
+      if valid_coordinates?(coordinates)
       # This section parses the input coordinates and creates
       # two separate arrays of rows and columns.
       # NOTE: could be refactored into separate helper method later

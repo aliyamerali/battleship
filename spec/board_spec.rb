@@ -28,8 +28,20 @@ RSpec.describe Board do
       expect(board.valid_coordinate?("A1")).to eq(true)
     end
 
-    it 'returns true for a coordinate in the cells hash' do
+    it 'returns false for a coordinate outside the cells hash' do
       expect(board.valid_coordinate?("Z1")).to eq(false)
+    end
+  end
+
+  describe "#valid_coordinates?" do
+    board = Board.new
+
+    it 'returns true for an array of coordinates in the cells hash' do
+      expect(board.valid_coordinates?(["A1", "A2", "A3"])).to eq(true)
+    end
+
+    it 'returns false for an array of coordinates outside the cells hash' do
+      expect(board.valid_coordinates?(["Z1", "G5", "K6"])).to eq(false)
     end
   end
 
@@ -122,7 +134,6 @@ RSpec.describe Board do
   describe '#render' do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
-    submarine = Ship.new("Submarine", 2)
 
     #TESTING TEMPLATE:   expect{board.render}.to output().to_stdout
     it 'prints an empty board to the screen when called at game start' do
@@ -132,7 +143,7 @@ RSpec.describe Board do
 
     it 'prints a board with hidden ships when passed value true' do
       board.place(cruiser, ["A1", "A2", "A3"])
-      expect{board.render}.to output("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
+      expect{board.render(true)}.to output("  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
     end
 
     it 'prints a board with misses marked' do
