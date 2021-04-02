@@ -2,6 +2,7 @@ require './lib/ship'
 require './lib/cell'
 require './lib/board'
 require './lib/game'
+require './lib/turn'
 
 
 # board = Board.new
@@ -10,3 +11,4 @@ require './lib/game'
 game = Game.new
 game.welcome_message
 game.player_board_setup
+game.play
