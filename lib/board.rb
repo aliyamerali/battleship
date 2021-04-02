@@ -39,6 +39,24 @@ class Board
     coordinates.all? { |coord| valid_coordinate?(coord) }
   end
 
+#ADD helper method to parse coordinates into rows
+  def parse_rows(coordinates)
+    rows = []
+    coordinates.each do |coordinate|
+      rows << coordinate[0]
+    end
+    return rows
+  end
+
+#ADD helper method to parse coordinates into columns
+  def parse_columns(coordinates)
+    columns = []
+    coordinates.each do |coordinate|
+      columns << coordinate[1].to_i
+    end
+    return columns
+  end
+  
   def valid_placement?(ship, coordinates)
     # Method checks whether number of elements is equal to ship length
     # and then verifies that all coordinates are valid
