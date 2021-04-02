@@ -34,85 +34,64 @@ class Board
     @cells[coordinate] != nil
   end
 
-#ADD helper method to run valid_coordinate? on array of coordinates
+  # Helper method to run valid_coordinate? on array of coordinates
   def valid_coordinates?(coordinates)
     coordinates.all? { |coord| valid_coordinate?(coord) }
   end
 
-#ADD helper method to parse coordinates into rows
+  # Helper method to parse coordinates into rows
   def parse_rows(coordinates)
     rows = []
     coordinates.each do |coordinate|
       rows << coordinate[0]
     end
-    return rows
+    rows
   end
 
-#ADD helper method to parse coordinates into columns
+  # Helper method to parse coordinates into columns
   def parse_columns(coordinates)
     columns = []
     coordinates.each do |coordinate|
       columns << coordinate[1].to_i
     end
-    return columns
+    columns
   end
 
+  # Method checks whether player input valid coordinates,
+  # and the ship's placement was either horizontal or vertical
   def valid_placement?(ship, coordinates)
-    # Method checks whether number of elements is equal to ship length
-    # and then verifies that all coordinates are valid
+    # Note: Logic only works when coordinates entered from L->R or T->B
+    player_input_valid?(ship, coordinates) &&
+    (is_horizontal?(ship, coordinates) ||
+    is_vertical?(ship, coordinates))
+  end
 
+  # Verifies number of elements is equal to ship length,
+  # all coordinates are on the board and don't overlap existing ships
+  def player_input_valid?(ship, coordinates)
+    (ship.length == coordinates.count) &&
+    valid_coordinates?(coordinates) &&
+    !overlap?(coordinates)
+  end
 
-    # #START CODE COMMENT
-    # if ship.length == coordinates.count && !overlap?(coordinates) # overlap? is negated
-    #   if valid_coordinates?(coordinates)
+  # When columns are consecutive and rows stay the same, placement is horizontal
+  def is_horizontal?(ship, coordinates)
+    consecutive?(ship, parse_columns(coordinates)) &&
+    same?(parse_rows(coordinates))
+  end
 
-      # This section parses the input coordinates and creates
-      # two separate arrays of rows and columns.
-      # NOTE: could be refactored into separate helper method later
+  # When rows are consecutive and columns stay the same, placement is is_vertical
+  def is_vertical?(ship, coordinates)
+    consecutive?(ship, parse_rows(coordinates)) &&
+    same?(parse_columns(coordinates))
+  end
 
-      #START CODE COMMENT
-        # rows = []
-        # columns = []
-        # coordinates.each do |coordinate|
-        #   rows << coordinate[0]
-        #   columns << coordinate[1].to_i
-        # end
-
-      # Conditional flow control begins here:
-      # Logic is either rows or columns must be consecutive
-      # and the other must have static values. For example:
-      # In the coordinates [A1, A2, A3], row (A) stays static and column (1, 2, 3) increments
-      # Note: Coordinates will be entered L->R or T->B order
-
-      #START CODE COMMENT
-    #     if check_consecutive(ship, rows) && check_static(columns)
-    #       true
-    #     elsif check_consecutive(ship, columns) && check_static(rows)
-    #       true
-    #     else
-    #       false
-    #     end
-    #   else
-    #     false
-    #   end
-    # else
-    #   false
-    # end
-
-    #REPLACEMENT USING HELPER METHODS:
-    length_correct = (ship.length == coordinates.count)
-    no_overlap = !overlap?(coordinates)
-    on_board = valid_coordinates?(coordinates)
-    parsed_rows = parse_rows(coordinates)
-    parsed_columns = parse_columns(coordinates)
-    horizontal_consecutive = check_consecutive(ship, parsed_columns) && check_static(parsed_rows)
-    vertical_consecutive = check_consecutive(ship, parsed_rows) && check_static(parsed_columns)
-
-    length_correct && no_overlap && on_board && (horizontal_consecutive || vertical_consecutive)
+  def overlap?(coordinates)
+    coordinates.any? { |coordinate| @cells[coordinate].ship != nil }
   end
 
   # Helper method is flexible enough to test rows or columns are consecutive
-  def check_consecutive(ship, parsed_coordinates)
+  def consecutive?(ship, parsed_coordinates)
     #generate array of arrays of valid rows/cols
     consecutive_coordinates = []
 
@@ -129,12 +108,8 @@ class Board
 
   # This method uses the #all? enumerable to check to see
   # if all parsed coordinates are equal to each other
-  def check_static(parsed_coordinates)
+  def same?(parsed_coordinates)
     parsed_coordinates.all? { |coordinate| coordinate == parsed_coordinates[0]}
-  end
-
-  def overlap?(coordinates)
-    coordinates.any? { |coordinate| @cells[coordinate].ship != nil }
   end
 
   def place(ship, coordinates)
