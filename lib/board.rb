@@ -148,8 +148,24 @@ class Board
   end
 
   def render(value = false)
-
-    #@cells.each do |cell|
+    print "  1 2 3 4 \n"
+    if value == true
+      @rows.each do |row|
+        print row
+        @columns.each do |col|
+          print " " + @cells[row + col.to_s].render(true)
+        end
+        print " \n"
+      end
+    else
+      @rows.each do |row|
+        print row
+        @columns.each do |col|
+          print " " + @cells[row + col.to_s].render
+        end
+        print " \n"
+      end
+    end
   end
   # binding.pry
 end
