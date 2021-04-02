@@ -1,11 +1,5 @@
-require_relative 'board'
-require_relative 'cell'
-require_relative 'ship'
-require 'pry'
-
 class Board
-  # Note: added rows and columns for pry session
-  attr_reader :cells, :rows, :columns
+  attr_reader :cells
 
   def initialize
     # Making column and row dimension as variables
@@ -14,7 +8,13 @@ class Board
     row_dimension = column_dimension
     @rows = "A".."D"
     @columns = 1..column_dimension
+    generate_board_hash
+  end
+
+  # Helper method that returns the @cells hash of board coordinates
+  def generate_board_hash
     coordinates = []
+    @cells = Hash.new
 
     # Iterate over row and column ranges to concatenate and push into array of coordinates
     @rows.each do |row|
@@ -23,11 +23,11 @@ class Board
       end
     end
 
-    @cells = Hash.new
     # We iterate over the coordinates array to populate the cells hash
-    coordinates.each do |coordinate|
+    coordinates.map do |coordinate|
       @cells[coordinate] = Cell.new(coordinate)
     end
+    @cells
   end
 
   def valid_coordinate?(coordinate)
