@@ -146,7 +146,7 @@ RSpec.describe Board do
 
   end
 
-  xdescribe '#render' do
+  describe '#render' do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
 
