@@ -139,6 +139,7 @@ class Game
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
       turn.user_shoots
+      turn.computer_shoots(turn.generate_computer_shot)
       # require 'pry'; binding.pry
     end
 
