@@ -16,7 +16,7 @@ class Game
   def welcome_message
     puts "Welcome to BATTLESHIP"
     puts "Enter p to play. Enter q to quit."
-    action = gets.chomp
+    # action = gets.chomp
   end
 
   def player_board_setup
@@ -30,7 +30,7 @@ class Game
     @player_board.render(true)
 
     puts "Enter the squares for the Submarine (2 spaces): "
-    @player_board.place(@player_sub, ["B1", "B2"]) #get_user_coordinates(@player_sub))
+    @player_board.place(@player_sub, ["D1","D2"])#get_user_coordinates(@player_sub))
   end
 
   def get_user_coordinates(ship)
@@ -49,11 +49,33 @@ class Game
     return response
   end
 
+  def cpu_board_setup_manual
+    # coord1 = ["A1", "A2", "A3"]
+    # coord2 = ["C1", "D1"]
+    # @cpu_board.place(@cpu_cruiser, coord1)
+    # @cpu_board.place(@cpu_sub, coord2)
+
+  end
+
   def cpu_board_setup
-    coord1 = ["A1", "A2", "A3"]
-    coord2 = ["C1", "D1"]
-    @cpu_board.place(@cpu_cruiser, coord1)
-    @cpu_board.place(@cpu_sub, coord2)
+    anchor = @cpu_board.cells.keys.sample
+
+    #Make array of 4 possible coordinate paths for cruiser
+    possible_coordinates = [
+      [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
+      [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
+      [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
+      [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
+    ]
+
+    #Randomly select one of these possible coordinates, test for valid placement, repeat until valid
+    cruiser_coordinates = []
+    while !@cpu_board.valid_placement?(@cpu_cruiser, cruiser_coordinates)
+      cruiser_coordinates = [anchor, possible_coordinates.sample]
+      cruiser_coordinates.flatten!.sort!
+      require 'pry'; binding.pry
+    end
+
   end
 
   def random_coordinate_generator
