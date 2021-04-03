@@ -51,21 +51,26 @@ class Game
 
   def cpu_board_setup
     generator = 0 #rand(2) #0 = am, 1 = jg
-    if generator = 0
-      cruiser_coordinates = am_random_coordinate_generator(@cpu_board, @cpu_cruiser)
+    start_time = Time.now
+    if generator == 0
+      # puts "using AM algorithm"
+      cruiser_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_cruiser)
       @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = am_random_coordinate_generator(@cpu_board, @cpu_sub)
+      sub_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_sub)
       @cpu_board.place(@cpu_sub, sub_coordinates)
     else
-      cruiser_coordinates = jg_random_coordinate_generator(@cpu_board, @cpu_cruiser)
+      # puts "using JG algorithm"
+      seed = @cpu_board.columns.to_a.sample #to do: add iteration somewhere to iterate through seed sample
+      cruiser_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_cruiser), seed)
       @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = jg_random_coordinate_generator(@cpu_board, @cpu_sub)
+      sub_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_sub), seed)
       @cpu_board.place(@cpu_sub, sub_coordinates)
     end
+    # puts Time.now - start_time
   end
 
 
-  def am_random_coordinate_generator(board, ship)
+  def am_generate_random_coordinate(board, ship)
     anchor = board.cells.keys.sample
     #Make array of 4 possible coordinate paths for cruiser
     if ship.length == 3
@@ -94,7 +99,7 @@ class Game
   end
 
   # Seed is passed as a range between num of columns of board
-  def generate_random_coordinates(board, coord_array, seed)
+  def jg_generate_random_coordinates(board, coord_array, seed)
     coord_pairs = []
     coord_array.each do |array|
       if array[0].is_a? Integer
@@ -124,8 +129,6 @@ class Game
     end
     consecutive_coordinates
   end
-
-
 
   def play
     #while ships are not sunk, create turn
