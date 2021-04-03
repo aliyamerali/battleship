@@ -11,7 +11,7 @@ describe Game do
 
   describe '#welcome_message' do
     it 'prints welcome message' do
-
+      expect{game.welcome_message}.to output("Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.").to_stdout
     end
 
     xit 'takes command line input of p or q' do
