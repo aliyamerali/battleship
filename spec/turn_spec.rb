@@ -17,8 +17,11 @@ RSpec.describe Turn do
     end
 
     it '#generate_computer_shot does not return a cell that has been fired upon' do
-      shot = turn.generate_computer_shot
-      expect(player_board.cells[shot].fired_upon?).to eq(false)
+      shot1 = turn.generate_computer_shot
+      turn.computer_shoots(shot1)
+
+      shot2 = turn.generate_computer_shot
+      expect(player_board.cells[shot2].fired_upon?).to eq(false)
     end
 
     it '#computer_shoots fires upon a given cell' do
