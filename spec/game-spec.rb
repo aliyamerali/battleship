@@ -3,7 +3,7 @@ require './lib/ship'
 require './lib/board'
 require './lib/game'
 
-describe Game do
+RSpec.describe Game do
 
   describe '#initialize' do
 

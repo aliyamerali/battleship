@@ -27,8 +27,17 @@ class Turn
       @cpu_board.cells[shot].fire_upon
   end
 
-  def get_computer_shot
+  def generate_computer_shot
     # generate a random shot, not fire on a space that has already been fired on.
+    shot = @player_board.cells.keys.sample
+    while @player_board.cells[shot].fired_upon?
+      shot = @player_board.cells.keys.sample
+    end
+    shot
+  end
+
+  def computer_shoots(shot)
+    @player_board.cells[shot].fire_upon
   end
 
   def display_results
