@@ -1,5 +1,5 @@
 class Board
-  attr_reader :cells, :rows, :columns
+  attr_reader :cells
 
   def initialize
     # Making column and row dimension as variables

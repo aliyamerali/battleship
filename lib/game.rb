@@ -101,36 +101,6 @@ class Game
     # 5b. If not valid, re-do loop from #2 onwards
   end
 
-  def generate_ship_possibilities(board, ship)
-    #generate array of arrays of valid rows/cols
-    consecutive_coordinates = []
-
-    board.rows.to_a.each_cons(ship.length) do |row|
-      consecutive_coordinates << row
-    end
-    board.columns.to_a.each_cons(ship.length) do |column|
-      consecutive_coordinates << column
-    end
-
-    coord_pairs = []
-    consecutive_coordinates.each do |array|
-      #seed = consecutive_coordinates.sample
-      if array[0].is_a? Integer
-         coord_pairs << array.map do |coordinate|
-          board.rows.to_a.sample + coordinate.to_s
-        end
-      elsif array[0].is_a? String
-        coord_pairs << array.map do |coordinate|
-          coordinate + board.columns.to_a.sample.to_s
-        end
-      end
-    end
-    coord_pairs
-    #require 'pry';binding.pry
-  end
-
-
-
   def play
     #while ships are not sunk, create turn
     while !cpu_all_ships_sunk? && !player_all_ships_sunk?
