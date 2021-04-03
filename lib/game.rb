@@ -93,8 +93,26 @@ class Game
     return ship_coordinates
   end
 
-#TO RENAME: jg_random_coordinate_generator(board, ship)
-  def generate_ship_possibilities(board, ship)
+  # Seed is passed as a range between num of columns of board
+  def generate_random_coordinates(board, coord_array, seed)
+    coord_pairs = []
+    coord_array.each do |array|
+      if array[0].is_a? Integer
+         coord_pairs << array.map do |coordinate|
+          board.rows.to_a[seed] + coordinate.to_s
+        end
+      elsif array[0].is_a? String
+        coord_pairs << array.map do |coordinate|
+          coordinate + board.columns.to_a[seed].to_s
+        end
+      end
+    end
+    coord_pairs.sample
+    #require 'pry';binding.pry
+  end
+
+  # Helper method to be used with #generate_random_coordinates
+  def create_coordinate_array(board, ship)
     #generate array of arrays of valid rows/cols
     consecutive_coordinates = []
 
@@ -104,22 +122,7 @@ class Game
     board.columns.to_a.each_cons(ship.length) do |column|
       consecutive_coordinates << column
     end
-
-    coord_pairs = []
-    consecutive_coordinates.each do |array|
-      #seed = consecutive_coordinates.sample
-      if array[0].is_a? Integer
-         coord_pairs << array.map do |coordinate|
-          board.rows.to_a.sample + coordinate.to_s
-        end
-      elsif array[0].is_a? String
-        coord_pairs << array.map do |coordinate|
-          coordinate + board.columns.to_a.sample.to_s
-        end
-      end
-    end
-    coord_pairs
-    #require 'pry';binding.pry
+    consecutive_coordinates
   end
 
 
