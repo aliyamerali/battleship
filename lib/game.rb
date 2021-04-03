@@ -110,10 +110,20 @@ class Game
         coord_pairs << array.map do |coordinate|
           coordinate + board.columns.to_a[seed].to_s
         end
+
       end
+
+      counter = 0
+      coordinate_pair = coord_pairs.sample
+      while board.overlap?(coordinate_pair) || counter == 4 do
+        counter += 1
+        puts "Trying another..."
+        coordinate_pair = coord_pairs.sample
+      end
+
+      require 'pry';binding.pry
+
     end
-    coord_pairs.sample
-    #require 'pry';binding.pry
   end
 
   # Helper method to be used with #generate_random_coordinates
@@ -130,6 +140,10 @@ class Game
     consecutive_coordinates
   end
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
   def play
     #while ships are not sunk, create turn
     while !cpu_all_ships_sunk? && !player_all_ships_sunk?
