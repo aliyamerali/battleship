@@ -26,13 +26,14 @@ describe Game do
     end
   end
 
-  describe "#generate_ship_possibilities" do
+  describe "#generate_random_coordinates" do
     game = Game.new
     cpu_board = Board.new
     ship = Ship.new("cruiser", 3)
+    starting_array = game.create_coordinate_array(cpu_board, ship)
 
-    it 'returns array of arrays' do
-      expect(game.generate_ship_possibilities(cpu_board, ship)[0]).to be_instance_of(Array)
+    it 'returns array' do
+      expect(game.generate_random_coordinates(cpu_board, starting_array, 1)).to be_instance_of(Array)
     end
   end
 end
