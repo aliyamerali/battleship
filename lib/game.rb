@@ -49,58 +49,51 @@ class Game
     return response
   end
 
-  def cpu_board_setup_manual
-    # coord1 = ["A1", "A2", "A3"]
-    # coord2 = ["C1", "D1"]
-    # @cpu_board.place(@cpu_cruiser, coord1)
-    # @cpu_board.place(@cpu_sub, coord2)
-
+  def cpu_board_setup
+    generator = 0 #rand(2) #0 = am, 1 = jg
+    if generator = 0
+      cruiser_coordinates = am_random_coordinate_generator(@cpu_board, @cpu_cruiser)
+      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
+      sub_coordinates = am_random_coordinate_generator(@cpu_board, @cpu_sub)
+      @cpu_board.place(@cpu_sub, sub_coordinates)
+    else
+      cruiser_coordinates = jg_random_coordinate_generator(@cpu_board, @cpu_cruiser)
+      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
+      sub_coordinates = jg_random_coordinate_generator(@cpu_board, @cpu_sub)
+      @cpu_board.place(@cpu_sub, sub_coordinates)
+    end
   end
 
-  def cpu_board_setup
-    anchor = @cpu_board.cells.keys.sample
 
+  def am_random_coordinate_generator(board, ship)
+    anchor = board.cells.keys.sample
     #Make array of 4 possible coordinate paths for cruiser
-    possible_coordinates = [
-      [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
-      [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
-      [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
-      [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
-    ]
+    if ship.length == 3
+      possible_coordinates = [
+        [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
+        [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
+        [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
+        [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
+      ]
+    elsif ship.length == 2
+        possible_coordinates = [
+          [anchor[0]+(anchor[1].to_i - 1).to_s],
+          [anchor[0]+(anchor[1].to_i + 1).to_s],
+          [(anchor[0].ord - 1).chr+anchor[1]],
+          [(anchor[0].ord + 1).chr+anchor[1]]
+        ]
+      end
 
     #Randomly select one of these possible coordinates, test for valid placement, repeat until valid
-    cruiser_coordinates = []
-    while !@cpu_board.valid_placement?(@cpu_cruiser, cruiser_coordinates)
-      cruiser_coordinates = [anchor, possible_coordinates.sample]
-      cruiser_coordinates.flatten!.sort!
-      require 'pry'; binding.pry
+    ship_coordinates = []
+    while !board.valid_placement?(ship, ship_coordinates)
+      ship_coordinates = [anchor, possible_coordinates.sample]
+      ship_coordinates.flatten!.sort!
     end
-
+    return ship_coordinates
   end
 
-  def random_coordinate_generator
-    #set orientation
-    orientation = rand(2) #0 = horizontal, 1 = vertical
-
-    # 1. generate board range based on ship length and orientation
-    possible_coordinates = []
-    @rows.each do |row|
-      @columns.each do |column|
-        possible_coordinates << row + column.to_s
-      end
-    end
-    # 2. sample board range for anchor coordinate
-    test_coordinates = []
-    anchor_coordinate = coordinates.sample
-    test_coordinates << anchor_coordinate
-
-    # 3. generate ship coordinates from ship length, orietnation, anchor coordinate
-
-    # 4. Check validation for generated coordiantes
-    # 5a. If valid, set to coordinates for place
-    # 5b. If not valid, re-do loop from #2 onwards
-  end
-
+#TO RENAME: jg_random_coordinate_generator(board, ship)
   def generate_ship_possibilities(board, ship)
     #generate array of arrays of valid rows/cols
     consecutive_coordinates = []
