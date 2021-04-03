@@ -17,8 +17,14 @@ class Turn
     @player_board.render(true)
   end
 
-  def get_user_shot
-    # asks player for their shot
+  def user_shoots
+    puts "Enter the coordinate for your shot:"
+    shot = gets.chomp
+    while !@cpu_board.valid_coordinate?(shot)
+      puts "Please enter a valid coordinate:"
+      shot = gets.chomp
+    end
+      @cpu_board.cells[shot].fire_upon
   end
 
   def get_computer_shot

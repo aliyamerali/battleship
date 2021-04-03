@@ -26,11 +26,11 @@ class Game
 
     @player_board.render
     puts "Enter the squares for the Cruiser (3 spaces): "
-    @player_board.place(@player_cruiser, get_user_coordinates(@player_cruiser))
+    @player_board.place(@player_cruiser, ["A1","A2", "A3"])#get_user_coordinates(@player_cruiser))
     @player_board.render(true)
 
     puts "Enter the squares for the Submarine (2 spaces): "
-    @player_board.place(@player_sub, get_user_coordinates(@player_sub))
+    @player_board.place(@player_sub, ["B1", "B2"]) #get_user_coordinates(@player_sub))
   end
 
   def get_user_coordinates(ship)
@@ -47,6 +47,13 @@ class Game
       end
     end
     return response
+  end
+
+  def cpu_board_setup
+    coord1 = ["A1", "A2", "A3"]
+    coord2 = ["C1", "D1"]
+    @cpu_board.place(@cpu_cruiser, coord1)
+    @cpu_board.place(@cpu_sub, coord2)
   end
 
   def random_coordinate_generator
@@ -73,9 +80,26 @@ class Game
   end
 
   def play
-    #while ships are not sunk, create turns
-    turn = Turn.new(@cpu_board, @player_board)
-    turn.display_boards
+    #while ships are not sunk, create turn
+    while !cpu_all_ships_sunk? && !player_all_ships_sunk?
+      puts "cpu_all_ships_sunk? == false evaluates to #{cpu_all_ships_sunk? == false}"
+      puts "player_all_ships_sunk? == false evalutes to #{player_all_ships_sunk? == false}"
+      puts @cpu_sub.health
+      turn = Turn.new(@cpu_board, @player_board)
+      turn.display_boards
+      turn.user_shoots
+      # require 'pry'; binding.pry
+    end
+
+    puts "game over"
     #once all of one players ships are sunk, call an end_game helper that declares winner!
+  end
+
+  def cpu_all_ships_sunk?
+    @cpu_sub.sunk? && @cpu_cruiser.sunk?
+  end
+
+  def player_all_ships_sunk?
+    @player_sub.sunk? && @player_cruiser.sunk?
   end
 end

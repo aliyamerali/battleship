@@ -11,4 +11,5 @@ require './lib/turn'
 game = Game.new
 game.welcome_message
 game.player_board_setup
+game.cpu_board_setup
 game.play
