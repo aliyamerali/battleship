@@ -49,60 +49,57 @@ class Game
     return response
   end
 
-  def cpu_board_setup_manual
-    # coord1 = ["A1", "A2", "A3"]
-    # coord2 = ["C1", "D1"]
-    # @cpu_board.place(@cpu_cruiser, coord1)
-    # @cpu_board.place(@cpu_sub, coord2)
-
+  def cpu_board_setup
+    generator = 0 #rand(2) #0 = am, 1 = jg
+    start_time = Time.now
+    if generator == 0
+      # puts "using AM algorithm"
+      cruiser_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_cruiser)
+      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
+      sub_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_sub)
+      @cpu_board.place(@cpu_sub, sub_coordinates)
+    else
+      # puts "using JG algorithm"
+      seed = @cpu_board.columns.to_a.sample #to do: add iteration somewhere to iterate through seed sample
+      cruiser_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_cruiser), seed)
+      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
+      sub_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_sub), seed)
+      @cpu_board.place(@cpu_sub, sub_coordinates)
+    end
+    # puts Time.now - start_time
   end
 
-  def cpu_board_setup
-    anchor = @cpu_board.cells.keys.sample
 
+  def am_generate_random_coordinate(board, ship)
+    anchor = board.cells.keys.sample
     #Make array of 4 possible coordinate paths for cruiser
-    possible_coordinates = [
-      [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
-      [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
-      [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
-      [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
-    ]
+    if ship.length == 3
+      possible_coordinates = [
+        [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
+        [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
+        [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
+        [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
+      ]
+    elsif ship.length == 2
+        possible_coordinates = [
+          [anchor[0]+(anchor[1].to_i - 1).to_s],
+          [anchor[0]+(anchor[1].to_i + 1).to_s],
+          [(anchor[0].ord - 1).chr+anchor[1]],
+          [(anchor[0].ord + 1).chr+anchor[1]]
+        ]
+      end
 
     #Randomly select one of these possible coordinates, test for valid placement, repeat until valid
-    cruiser_coordinates = []
-    while !@cpu_board.valid_placement?(@cpu_cruiser, cruiser_coordinates)
-      cruiser_coordinates = [anchor, possible_coordinates.sample]
-      cruiser_coordinates.flatten!.sort!
-      require 'pry'; binding.pry
+    ship_coordinates = []
+    while !board.valid_placement?(ship, ship_coordinates)
+      ship_coordinates = [anchor, possible_coordinates.sample]
+      ship_coordinates.flatten!.sort!
     end
-
-  end
-
-  def random_coordinate_generator
-    #set orientation
-    orientation = rand(2) #0 = horizontal, 1 = vertical
-
-    # 1. generate board range based on ship length and orientation
-    possible_coordinates = []
-    @rows.each do |row|
-      @columns.each do |column|
-        possible_coordinates << row + column.to_s
-      end
-    end
-    # 2. sample board range for anchor coordinate
-    test_coordinates = []
-    anchor_coordinate = coordinates.sample
-    test_coordinates << anchor_coordinate
-
-    # 3. generate ship coordinates from ship length, orietnation, anchor coordinate
-
-    # 4. Check validation for generated coordiantes
-    # 5a. If valid, set to coordinates for place
-    # 5b. If not valid, re-do loop from #2 onwards
+    return ship_coordinates
   end
 
   # Seed is passed as a range between num of columns of board
-  def generate_random_coordinates(board, coord_array, seed)
+  def jg_generate_random_coordinates(board, coord_array, seed)
     coord_pairs = []
     coord_array.each do |array|
       if array[0].is_a? Integer
@@ -133,8 +130,6 @@ class Game
     consecutive_coordinates
   end
 
-
-
   def play
     #while ships are not sunk, create turn
     while !cpu_all_ships_sunk? && !player_all_ships_sunk?
@@ -144,6 +139,7 @@ class Game
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
       turn.user_shoots
+      turn.computer_shoots(turn.generate_computer_shot)
       # require 'pry'; binding.pry
     end
 
