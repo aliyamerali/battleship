@@ -50,23 +50,25 @@ class Game
   end
 
   def cpu_board_setup
-    generator = 0 #rand(2) #0 = am, 1 = jg
+    generator = rand(2) #0 = am, 1 = jg
     start_time = Time.now
     if generator == 0
-      # puts "using AM algorithm"
+      puts "using AM algorithm"
       cruiser_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_cruiser)
       @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
       sub_coordinates = am_generate_random_coordinate(@cpu_board, @cpu_sub)
       @cpu_board.place(@cpu_sub, sub_coordinates)
-    else
-      # puts "using JG algorithm"
-      seed = @cpu_board.columns.to_a.sample #to do: add iteration somewhere to iterate through seed sample
-      cruiser_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_cruiser), seed)
+    elsif generator == 1
+      puts "using JG algorithm"
+      #to do: add iteration somewhere to iterate through seed sample
+      cruiser_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_cruiser))
+      #require 'pry';binding.pry
       @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_sub), seed)
+      sub_coordinates = jg_generate_random_coordinates(@cpu_board, create_coordinate_array(@cpu_board, @cpu_sub))
+      #require 'pry';binding.pry
       @cpu_board.place(@cpu_sub, sub_coordinates)
     end
-    # puts Time.now - start_time
+    puts Time.now - start_time
   end
 
 
@@ -99,7 +101,8 @@ class Game
   end
 
   # Seed is passed as a range between num of columns of board
-  def jg_generate_random_coordinates(board, coord_array, seed)
+  def jg_generate_random_coordinates(board, coord_array)
+    seed = board.columns.to_a.map { |col| col - 1 }.sample
     coord_pairs = []
     coord_array.each do |array|
       if array[0].is_a? Integer
@@ -110,20 +113,18 @@ class Game
         coord_pairs << array.map do |coordinate|
           coordinate + board.columns.to_a[seed].to_s
         end
-
       end
-
-      counter = 0
-      coordinate_pair = coord_pairs.sample
-      while board.overlap?(coordinate_pair) || counter == 4 do
-        counter += 1
-        puts "Trying another..."
-        coordinate_pair = coord_pairs.sample
-      end
-
-      require 'pry';binding.pry
-
     end
+    counter = 0
+    coordinate_pair = coord_pairs.select { |coord| !board.overlap?(coord) }
+    # while board.overlap?(coordinate_pair) || counter == 4 do
+    #   counter += 1
+    #   puts "Trying another..."
+    #   coordinate_pair = coord_pairs.sample
+    # end
+
+    #require 'pry';binding.pry
+    final = coordinate_pair.sample
   end
 
   # Helper method to be used with #generate_random_coordinates
@@ -140,10 +141,6 @@ class Game
     consecutive_coordinates
   end
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
   def play
     #while ships are not sunk, create turn
     while !cpu_all_ships_sunk? && !player_all_ships_sunk?
