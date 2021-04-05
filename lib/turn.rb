@@ -12,25 +12,28 @@ class Turn
 
   def display_boards
     puts "=============COMPUTER BOARD============="
-    @cpu_board.render(true)
+    @cpu_board.render
     puts "==============PLAYER BOARD=============="
     @player_board.render(true)
   end
 
   def user_shoots
+    shot_is_fired = false
     puts "Enter the coordinate for your shot:"
-    @user_shot = gets.chomp
-    while !@cpu_board.valid_coordinate?(@user_shot)
-      puts "Please enter a valid coordinate:"
+
+    while shot_is_fired == false
       @user_shot = gets.chomp
-      # if !@cpu_board.cells[@user_shot].fired_upon?
-      #   @cpu_board.cells[@user_shot].fire_upon
-      # else
-      #   puts "You've already fired upon this cell."
-      #   shot = []
-      # end
+      if @cpu_board.valid_coordinate?(@user_shot)
+        if @cpu_board.cells[@user_shot].fired_upon? == true
+          puts "You have already fired on that coordinate. Please try again."
+        else
+          @cpu_board.cells[@user_shot].fire_upon
+          shot_is_fired = true
+        end
+      else
+        puts "Please enter a valid coordinate."
+      end
     end
-    @cpu_board.cells[@user_shot].fire_upon
   end
 
   def generate_computer_shot
