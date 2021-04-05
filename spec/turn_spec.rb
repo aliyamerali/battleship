@@ -60,6 +60,17 @@ RSpec.describe Turn do
   end
 
   describe "#display_results" do
-    
+    cpu_board = Board.new
+    player_board = Board.new
+    turn = Turn.new(cpu_board, player_board)
+    turn.player_shot = "A1"
+    cpu_board.cells[turn.player_shot].fire_upon
+    turn.cpu_shot = "D1"
+    player_board.cells[turn.cpu_shot].fire_upon
+
+    it "prints turn results accurately for player and computer" do
+      expect{turn.display_results}.to output("Your shot on A1 was a miss.\nMy shot on D1 was a miss.\n").to_stdout
+    end
+
   end
 end
