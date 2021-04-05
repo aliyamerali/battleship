@@ -155,6 +155,7 @@ class Game
       turn.display_boards
       turn.user_shoots
       turn.computer_shoots(turn.generate_computer_shot)
+      turn.display_results
     end
     end_game
   end
