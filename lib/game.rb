@@ -68,35 +68,50 @@ class Game
     response
   end
 
-
+  #Merali algorithm: Randomly select an anchor point on the Board
+  #Generate a set of 4 possible coordinates based on that anchor point
+  #Sample from these 4 coordinates until a valid set is found; if none is found,
+  #re-sample from the board for a new anchor point
   def merali_algorithm(board, ship)
-    anchor = board.cells.keys.sample
-    #Make array of 4 possible coordinate paths for cruiser
-    if ship.length == 3
-      possible_coordinates = [
-        [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
-        [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
-        [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
-        [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
-      ]
-    elsif ship.length == 2
-        possible_coordinates = [
-          [anchor[0]+(anchor[1].to_i - 1).to_s],
-          [anchor[0]+(anchor[1].to_i + 1).to_s],
-          [(anchor[0].ord - 1).chr+anchor[1]],
-          [(anchor[0].ord + 1).chr+anchor[1]]
-        ]
-      end
-
-    #Randomly select one of these possible coordinates, test for valid placement, repeat until valid
     ship_coordinates = []
     while !board.valid_placement?(ship, ship_coordinates)
-      ship_coordinates = [anchor, possible_coordinates.sample]
-      ship_coordinates.flatten!.sort!
+      anchor = board.cells.keys.sample
+      possible_coordinates = generate_possible_coordinates(ship, anchor)
+      if sample_possible_coordinates(board, ship, possible_coordinates) != nil
+        ship_coordinates = sample_possible_coordinates(board, ship, possible_coordinates)
+      end
     end
     return ship_coordinates
   end
 
+
+  #Helper method to iterate through possible coordinates generated
+  def sample_possible_coordinates(board, ship, possible_coordinates)
+    ship_coordinates = possible_coordinates.find do |coordinates|
+      board.valid_placement?(ship, coordinates)
+    end
+  end
+
+
+  #Helper method to generate possible coordinates based on an anchor coordinate
+  def generate_possible_coordinates(ship, anchor)
+    if ship.length == 3
+      possible_coordinates = [
+        [anchor, anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
+        [anchor, anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
+        [anchor, (anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
+        [anchor, (anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
+      ]
+    elsif ship.length == 2
+        possible_coordinates = [
+          [anchor, anchor[0]+(anchor[1].to_i - 1).to_s],
+          [anchor, anchor[0]+(anchor[1].to_i + 1).to_s],
+          [anchor, (anchor[0].ord - 1).chr+anchor[1]],
+          [anchor, (anchor[0].ord + 1).chr+anchor[1]]
+        ]
+    end
+    return possible_coordinates
+  end
 
   # Given a series of valid consecutive coordinates, rows and columns are added
   # based on a random seed that create an array of arrays of coordinate pairs.
@@ -140,6 +155,7 @@ class Game
       turn.display_boards
       turn.user_shoots
       turn.computer_shoots(turn.generate_computer_shot)
+      turn.display_results
     end
     end_game
   end
