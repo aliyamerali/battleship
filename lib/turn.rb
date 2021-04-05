@@ -12,7 +12,7 @@ class Turn
 
   def display_boards
     puts "=============COMPUTER BOARD============="
-    @cpu_board.render(true)
+    @cpu_board.render
     puts "==============PLAYER BOARD=============="
     @player_board.render(true)
   end
