@@ -2,6 +2,7 @@ require './lib/cell'
 require './lib/ship'
 require './lib/board'
 require './lib/game'
+require './lib/turn'
 
 RSpec.describe Game do
 
@@ -99,6 +100,76 @@ RSpec.describe Game do
       end
       expect(failed_runs).to eq(false)
     end
+  end
+
+  describe '#create_consecutive_array' do
+    game = Game.new
+    cpu_board = Board.new
+    cpu_cruiser = Ship.new("Cruiser", 3)
+
+    it 'returns an array of arrays' do
+      expect(game.create_coordinate_array(cpu_board, cpu_cruiser)[0]).to be_instance_of(Array)
+    end
+
+    it 'nested arrays contain equal elements to ship length' do
+      expect(game.create_coordinate_array(cpu_board, cpu_cruiser)[0].count).to eq(3)
+    end
 
   end
+
+  describe '#play and #end_game' do
+    game = Game.new
+    game2 = Game.new
+
+    it 'outputs end_game info when cpu ship sunk' do
+      3.times do
+        game.cpu_cruiser.hit
+      end
+      2.times do
+        game.cpu_sub.hit
+      end
+
+      expect{game.play}.to output("You won!\n").to_stdout
+    end
+
+    it 'returns correct return value' do
+      3.times do
+        game2.player_cruiser.hit
+      end
+      2.times do
+        game2.player_sub.hit
+      end
+
+      expect(game2.end_game).to eq("I won!")
+    end
+  end
+
+  describe "#cpu_game_over and #player_game_over" do
+    game = Game.new
+    game2 = Game.new
+
+    it 'returns correct booleans if cpu loses' do
+      3.times do
+        game.cpu_cruiser.hit
+      end
+      2.times do
+        game.cpu_sub.hit
+      end
+      expect(game.cpu_game_over?).to eq(true)
+      expect(game.player_game_over?).to eq(false)
+    end
+
+    it 'returns correct booleans if player loses' do
+      3.times do
+        game2.player_cruiser.hit
+      end
+      2.times do
+        game2.player_sub.hit
+      end
+      expect(game2.cpu_game_over?).to eq(false)
+      expect(game2.player_game_over?).to eq(true)
+    end
+
+  end
+
 end

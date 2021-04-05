@@ -2,6 +2,7 @@
 
 
 class Game
+  attr_reader :cpu_cruiser, :cpu_sub, :player_cruiser, :player_sub # used for testing
 
   def initialize
     @cpu_board = Board.new
@@ -151,29 +152,29 @@ class Game
 
   def play
     #while ships are not sunk, create turn
-    while !cpu_all_ships_sunk? && !player_all_ships_sunk?
+    while !cpu_game_over? && !player_game_over?
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
       turn.user_shoots
       turn.computer_shoots(turn.generate_computer_shot)
       turn.display_results
     end
-    end_game
+    puts end_game
   end
 
   def end_game
-    if cpu_all_ships_sunk?
-      puts "You won!"
-    elsif player_all_ships_sunk?
-      puts "I won!"
+    if cpu_game_over?
+      "You won!"
+    elsif player_game_over?
+      "I won!"
     end
   end
 
-  def cpu_all_ships_sunk?
+  def cpu_game_over?
     @cpu_sub.sunk? && @cpu_cruiser.sunk?
   end
 
-  def player_all_ships_sunk?
+  def player_game_over?
     @player_sub.sunk? && @player_cruiser.sunk?
   end
 end
