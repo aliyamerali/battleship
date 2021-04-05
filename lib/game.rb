@@ -46,16 +46,16 @@ class Game
 
     @player_board.render
     puts "Enter the squares for the Cruiser (3 spaces): "
-    @player_board.place(@player_cruiser, get_user_coordinates(@player_cruiser))
+    @player_board.place(@player_cruiser, get_player_coordinates(@player_cruiser))
     @player_board.render(true)
 
     puts "Enter the squares for the Submarine (2 spaces): "
-    @player_board.place(@player_sub, get_user_coordinates(@player_sub))
+    @player_board.place(@player_sub, get_player_coordinates(@player_sub))
   end
 
 
-  # Validates user's coordinates for ship placement
-  def get_user_coordinates(ship)
+  # Validates player's coordinates for ship placement
+  def get_player_coordinates(ship)
     correct = false
 
     while correct == false
@@ -155,7 +155,7 @@ class Game
     while !cpu_game_over? && !player_game_over?
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
-      turn.user_shoots
+      turn.player_shoots
       turn.computer_shoots(turn.generate_computer_shot)
       turn.display_results
     end
