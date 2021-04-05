@@ -1,5 +1,6 @@
 # require './lib/turn'
 
+
 class Game
 
   def initialize
@@ -81,7 +82,7 @@ class Game
         ship_coordinates = sample_possible_coordinates(board, ship, possible_coordinates)
       end
     end
-    return ship_coordinates
+    ship_coordinates
   end
 
 
