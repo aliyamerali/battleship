@@ -68,10 +68,23 @@ class Game
     response
   end
 
-
+  #Merali algorithm: Randomly select an anchor point on the Board
+  #Generate a set of 4 possible coordinates based on that anchor point
+  #Sample from these 4 coordinates until a valid set is found; if none is found,
+  #re-sample from the board for a new anchor point
   def merali_algorithm(board, ship)
     anchor = board.cells.keys.sample
-    #Make array of 4 possible coordinate paths for cruiser
+    ship_coordinates = []
+    while !board.valid_placement?(ship, ship_coordinates)
+      possible_coordinates = generate_possible_coordinates(ship, anchor)
+      ship_coordinates = [anchor, possible_coordinates.sample]
+      ship_coordinates.flatten!.sort!
+    end
+    return ship_coordinates
+  end
+
+  #Helper method to generate possible coordinates based on an anchor coordinate
+  def generate_possible_coordinates(ship, anchor)
     if ship.length == 3
       possible_coordinates = [
         [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
@@ -86,17 +99,9 @@ class Game
           [(anchor[0].ord - 1).chr+anchor[1]],
           [(anchor[0].ord + 1).chr+anchor[1]]
         ]
-      end
-
-    #Randomly select one of these possible coordinates, test for valid placement, repeat until valid
-    ship_coordinates = []
-    while !board.valid_placement?(ship, ship_coordinates)
-      ship_coordinates = [anchor, possible_coordinates.sample]
-      ship_coordinates.flatten!.sort!
     end
-    return ship_coordinates
+    return possible_coordinates
   end
-
 
   # Given a series of valid consecutive coordinates, rows and columns are added
   # based on a random seed that create an array of arrays of coordinate pairs.
