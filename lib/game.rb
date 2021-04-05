@@ -73,31 +73,41 @@ class Game
   #Sample from these 4 coordinates until a valid set is found; if none is found,
   #re-sample from the board for a new anchor point
   def merali_algorithm(board, ship)
-    anchor = board.cells.keys.sample
     ship_coordinates = []
     while !board.valid_placement?(ship, ship_coordinates)
+      anchor = board.cells.keys.sample
       possible_coordinates = generate_possible_coordinates(ship, anchor)
-      ship_coordinates = [anchor, possible_coordinates.sample]
-      ship_coordinates.flatten!.sort!
+      if sample_possible_coordinates(board, ship, possible_coordinates) != nil
+        ship_coordinates = sample_possible_coordinates(board, ship, possible_coordinates)
+      end
     end
     return ship_coordinates
   end
+
+
+  #Helper method to iterate through possible coordinates generated
+  def sample_possible_coordinates(board, ship, possible_coordinates)
+    ship_coordinates = possible_coordinates.find do |coordinates|
+      board.valid_placement?(ship, coordinates)
+    end
+  end
+
 
   #Helper method to generate possible coordinates based on an anchor coordinate
   def generate_possible_coordinates(ship, anchor)
     if ship.length == 3
       possible_coordinates = [
-        [anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
-        [anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
-        [(anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
-        [(anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
+        [anchor, anchor[0]+(anchor[1].to_i - 1).to_s, anchor[0]+(anchor[1].to_i - 2).to_s],
+        [anchor, anchor[0]+(anchor[1].to_i + 1).to_s, anchor[0]+(anchor[1].to_i + 2).to_s],
+        [anchor, (anchor[0].ord - 1).chr+anchor[1], (anchor[0].ord - 2).chr+anchor[1]],
+        [anchor, (anchor[0].ord + 1).chr+anchor[1], (anchor[0].ord + 2).chr+anchor[1]]
       ]
     elsif ship.length == 2
         possible_coordinates = [
-          [anchor[0]+(anchor[1].to_i - 1).to_s],
-          [anchor[0]+(anchor[1].to_i + 1).to_s],
-          [(anchor[0].ord - 1).chr+anchor[1]],
-          [(anchor[0].ord + 1).chr+anchor[1]]
+          [anchor, anchor[0]+(anchor[1].to_i - 1).to_s],
+          [anchor, anchor[0]+(anchor[1].to_i + 1).to_s],
+          [anchor, (anchor[0].ord - 1).chr+anchor[1]],
+          [anchor, (anchor[0].ord + 1).chr+anchor[1]]
         ]
     end
     return possible_coordinates
