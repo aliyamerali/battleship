@@ -17,17 +17,16 @@ class Turn
     @player_board.render(true)
   end
 
-  def user_shoots
+  def player_shoots
     shot_is_fired = false
     puts "Enter the coordinate for your shot:"
-
     while shot_is_fired == false
-      @user_shot = gets.chomp
-      if @cpu_board.valid_coordinate?(@user_shot)
-        if @cpu_board.cells[@user_shot].fired_upon? == true
+      @player_shot = gets.chomp
+      if @cpu_board.valid_coordinate?(@player_shot)
+        if @cpu_board.cells[@player_shot].fired_upon? == true
           puts "You have already fired on that coordinate. Please try again."
         else
-          @cpu_board.cells[@user_shot].fire_upon
+          @cpu_board.cells[@player_shot].fire_upon
           shot_is_fired = true
         end
       else
@@ -37,7 +36,6 @@ class Turn
   end
 
   def generate_computer_shot
-    # generate a random shot, not fire on a space that has already been fired on.
     @cpu_shot = @player_board.cells.keys.sample
     while @player_board.cells[@cpu_shot].fired_upon?
       @cpu_shot = @player_board.cells.keys.sample
@@ -55,7 +53,7 @@ class Turn
       "H" => "was a hit",
       "X" => "sank a ship"
     }
-    puts "Your shot on #{@user_shot} #{status_conversion[@cpu_board.cells[@user_shot].render]}."
+    puts "Your shot on #{@player_shot} #{status_conversion[@cpu_board.cells[@player_shot].render]}."
     puts "My shot on #{@cpu_shot} #{status_conversion[@player_board.cells[@cpu_shot].render]}."
   end
 end
