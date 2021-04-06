@@ -4,7 +4,7 @@ class Cell
   def initialize(cell_coordinates)
     @coordinate = cell_coordinates
     @ship = nil
-    @fired_upon = false # REFACTOR: make fired_upon? instance var
+    @fired_upon = false
   end
 
   def empty?
@@ -15,7 +15,6 @@ class Cell
     @ship = ship
   end
 
-  # REFACTOR: Can be swept under fired_upon? instance var
   def fired_upon?
     @fired_upon
   end
@@ -27,10 +26,7 @@ class Cell
     end
   end
 
-  # Render has a default value of false, and passing in 'true' will
-  # show placement of ship.
   def render(value = false)
-    # Added the "S" case first since it's more stringent than the "." case
     if value == true && empty? == false && fired_upon? == false
       "S"
     elsif fired_upon? == false

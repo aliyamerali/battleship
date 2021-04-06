@@ -7,7 +7,6 @@ attr_reader :name, :length, :health
     @health = @length
   end
 
-  # Very succinct way to provide behavior
   def sunk?
     @health == 0
   end
