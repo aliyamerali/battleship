@@ -8,19 +8,23 @@ class Board
     generate_board_hash
   end
 
-  def generate_board_hash
+  def generate_coordinates
     coordinates = []
     @rows.each do |row|
       @columns.each do |column|
         coordinates << row + column.to_s
       end
     end
+    coordinates
+  end
 
+  def generate_board_hash
+    coordinates = generate_coordinates
     @cells = Hash.new
+
     coordinates.map do |coordinate|
       @cells[coordinate] = Cell.new(coordinate)
     end
-
     @cells
   end
 

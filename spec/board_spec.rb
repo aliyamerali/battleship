@@ -24,9 +24,13 @@ RSpec.describe Board do
     end
   end
 
-  describe "#generate_board_hash" do
+  describe "#generate_coordinates and generate_board_hash" do
     board = Board.new
 
+    it 'creates an array of full coordinates from rows and columns' do
+      expect(board.generate_coordinates[0]).to eq("A1")
+    end
+    
     it 'returns @cells hash and is composed of 16 pairs' do
       expect(board.cells).to be_instance_of(Hash)
       expect(board.cells.length).to eq(16)
@@ -175,7 +179,6 @@ RSpec.describe Board do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
-    # Reminder that cells is a hash, and we're querying keys
     cell_1 = board.cells["A1"]
     cell_2 = board.cells["A2"]
     cell_3 = board.cells["A3"]
