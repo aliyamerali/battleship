@@ -22,6 +22,10 @@ RSpec.describe Game do
     end
   end
 
+  describe '#get_board_dimensions' do
+
+  end
+
   # INSERT #cpu_board_setup tests here
   ################
 

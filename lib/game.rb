@@ -2,9 +2,24 @@ class Game
   attr_reader :cpu_board, :player_board, :ships
 
   def initialize
-    @cpu_board = Board.new
-    @player_board = Board.new
+    @board_dimension = get_board_dimensions
+    @cpu_board = Board.new(@board_dimension)
+    @player_board = Board.new(@board_dimension)
     generate_ships_hash
+  end
+
+  def get_board_dimensions
+    puts "How big a board would you like to play on?"
+    puts "The board will be a square, with dimensions of at least 3x3."
+    puts "Enter an integer dimension for your board:"
+    dimension = gets.chomp.to_i
+
+    while dimension < 3 || dimension.class != Integer
+      puts "That is an invalid dimension."
+      puts "Please enter a single integer value of at least 3."
+      dimension = gets.chomp.to_i
+    end
+    dimension
   end
 
   def generate_ships_hash

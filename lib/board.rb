@@ -2,12 +2,8 @@ class Board
   attr_reader :cells, :rows, :columns
 
   def initialize(dimension = 4)
-    # Making column and row dimension as variables
-    # so easier to make dimensions change down the line
     column_dimension = dimension
     row_dimension = dimension
-    # column_dimension = 4
-    # row_dimension = column_dimension
     @rows = "A"..("A".ord + row_dimension-1).chr
     @columns = 1..column_dimension
     generate_board_hash
@@ -119,7 +115,12 @@ class Board
   end
 
   def render(value = false)
-    print "  1 2 3 4 \n"
+    # print "  1 2 3 4 \n"
+    print "  "
+    @columns.each do |col|
+      print col.to_s + " "
+    end
+    print "\n"
     if value == true
       @rows.each do |row|
         print row
