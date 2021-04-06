@@ -7,13 +7,11 @@ require './lib/turn'
 RSpec.describe Game do
 
   describe '#initialize' do
+    game = Game.new
     cpu_board = Board.new
     @player_board = Board.new
-    # Add hash in future as container for ships
-    @player_cruiser = Ship.new("Cruiser", 3)
-    @player_sub = Ship.new("Submarine", 2)
-    @cpu_cruiser = Ship.new("Cruiser", 3)
-    @cpu_sub = Ship.new("Submarine", 2)
+    cpu_cruiser = game.ships[:cpu][:cruiser]
+    cpu_sub = game.ships[:cpu][:sub]
   end
 
 
@@ -21,8 +19,8 @@ RSpec.describe Game do
   describe '#merali_algorithm' do
     game = Game.new
     cpu_board = Board.new
-    cpu_cruiser = Ship.new("Cruiser", 3)
-    cpu_sub = Ship.new("Submarine", 2)
+    cpu_cruiser = game.ships[:cpu][:cruiser]
+    cpu_sub = game.ships[:cpu][:submarine]
 
 
     it 'returns an array of coordinates equal to ship length' do
@@ -68,8 +66,8 @@ RSpec.describe Game do
   describe '#griffith_algorithm' do
     game = Game.new
     cpu_board = Board.new
-    cpu_cruiser = Ship.new("Cruiser", 3)
-    cpu_sub = Ship.new("Submarine", 2)
+    cpu_cruiser = game.ships[:cpu][:cruiser]
+    cpu_sub = game.ships[:cpu][:submarine]
     cruiser_array = game.create_coordinate_array(cpu_board, cpu_cruiser) # helper method
     sub_array = game.create_coordinate_array(cpu_board, cpu_sub) # helper method
 
@@ -105,7 +103,7 @@ RSpec.describe Game do
   describe '#create_consecutive_array' do
     game = Game.new
     cpu_board = Board.new
-    cpu_cruiser = Ship.new("Cruiser", 3)
+    cpu_cruiser = game.ships[:cpu][:cruiser]
 
     it 'returns an array of arrays' do
       expect(game.create_coordinate_array(cpu_board, cpu_cruiser)[0]).to be_instance_of(Array)
@@ -120,13 +118,15 @@ RSpec.describe Game do
   describe '#play and #end_game' do
     game = Game.new
     game2 = Game.new
+    cpu_cruiser = game.ships[:cpu][:cruiser]
+    cpu_sub = game.ships[:cpu][:submarine]
 
     it 'outputs end_game info when cpu ship sunk' do
       3.times do
-        game.cpu_cruiser.hit
+        cpu_cruiser.hit
       end
       2.times do
-        game.cpu_sub.hit
+        cpu_sub.hit
       end
 
       expect{game.play}.to output("You won!\n").to_stdout
@@ -134,10 +134,10 @@ RSpec.describe Game do
 
     it 'returns correct return value' do
       3.times do
-        game2.player_cruiser.hit
+        game2.ships[:player][:cruiser].hit
       end
       2.times do
-        game2.player_sub.hit
+        game2.ships[:player][:submarine].hit
       end
 
       expect(game2.end_game).to eq("I won!")
@@ -147,13 +147,17 @@ RSpec.describe Game do
   describe "#cpu_game_over and #player_game_over" do
     game = Game.new
     game2 = Game.new
+    cpu_cruiser = game.ships[:cpu][:cruiser]
+    cpu_sub = game.ships[:cpu][:submarine]
 
     it 'returns correct booleans if cpu loses' do
+      #require 'pry'; binding.pry
+
       3.times do
-        game.cpu_cruiser.hit
+        cpu_cruiser.hit
       end
       2.times do
-        game.cpu_sub.hit
+        cpu_sub.hit
       end
       expect(game.cpu_game_over?).to eq(true)
       expect(game.player_game_over?).to eq(false)
@@ -161,10 +165,10 @@ RSpec.describe Game do
 
     it 'returns correct booleans if player loses' do
       3.times do
-        game2.player_cruiser.hit
+        game2.ships[:player][:cruiser].hit
       end
       2.times do
-        game2.player_sub.hit
+        game2.ships[:player][:submarine].hit
       end
       expect(game2.cpu_game_over?).to eq(false)
       expect(game2.player_game_over?).to eq(true)
