@@ -5,6 +5,7 @@ attr_accessor :player_shot, :cpu_shot #These instance variables were only given
   def initialize(cpu_board, player_board)
     @cpu_board = cpu_board
     @player_board = player_board
+    @target_mode = false # used for CPU AI
   end
 
   def display_boards
@@ -33,11 +34,44 @@ attr_accessor :player_shot, :cpu_shot #These instance variables were only given
   end
 
   def generate_computer_shot
-    @cpu_shot = @player_board.cells.keys.sample
-    while @player_board.cells[@cpu_shot].fired_upon?
+    if @target_mode == true
+      require 'pry'; binding.pry
+      puts "Target engaged."
+      @cpu_shot = targetted_area(hot_spot, @player_board).sample
+      while @player_board.cells[@cpu_shot].fired_upon?
+        @cpu_shot = targetted_area(hot_spot, @player_board).sample
+      end
+      computer_shoots(@cpu_shot)
+      if @player_board.cells[hot_spot].render == "X"
+        @target_mode = false
+      end
+    else
+      # Shoot randomly on board until a hit
       @cpu_shot = @player_board.cells.keys.sample
+      while @player_board.cells[@cpu_shot].fired_upon?
+        @cpu_shot = @player_board.cells.keys.sample
+      end
+      computer_shoots(@cpu_shot)
+      # require 'pry'; binding.pry
+      if @player_board.cells[@cpu_shot].render == "H"
+        @target_mode = true
+        hot_spot = @cpu_shot
+        require 'pry'; binding.pry
+      end
     end
-    @cpu_shot
+  end
+
+  def targetted_area(hot_spot, board)
+    nearby_coordinates = [
+      [hot_spot, hot_spot[0]+(hot_spot[1].to_i - 1).to_s, hot_spot[0]+(hot_spot[1].to_i - 2).to_s],
+      [hot_spot, hot_spot[0]+(hot_spot[1].to_i + 1).to_s, hot_spot[0]+(hot_spot[1].to_i + 2).to_s],
+      [hot_spot, (hot_spot[0].ord - 1).chr+hot_spot[1], (hot_spot[0].ord - 2).chr+hot_spot[1]],
+      [hot_spot, (hot_spot[0].ord + 1).chr+hot_spot[1], (hot_spot[0].ord + 2).chr+hot_spot[1]]
+    ]
+    ship_coordinates = nearby_coordinates.find_all do |coordinates|
+      board.valid_coordinates?(coordinates)
+    end
+    ship_coordinates
   end
 
   def computer_shoots(shot)

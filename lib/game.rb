@@ -33,7 +33,7 @@ class Game
       algorithm = "Merali's"
       @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
       @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
-    elsif generator == 1
+    elsif branch_decision == 1
       algorithm = "Griffith's"
       @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
       @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
@@ -44,7 +44,8 @@ class Game
 
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
-    sub = @ships[:player_ships][:sub]
+    sub = @ships[:player][:submarine]
+    #require 'pry'; binding.pry
 
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
@@ -61,11 +62,12 @@ class Game
 
   # Validates player's coordinates for ship placement
   def get_player_coordinates(ship)
-    response = gets.chomp
+    response = gets.chomp.split
     while @player_board.valid_placement?(ship, response) == false
       puts "Those are invalid coordinates. Please try again"
-      response = gets.chomp
+      response = gets.chomp.split
     end
+    response
   end
 
   #Merali algorithm: Randomly select an anchor point on the Board
@@ -157,7 +159,7 @@ class Game
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
       turn.player_shoots
-      turn.computer_shoots(turn.generate_computer_shot)
+      turn.generate_computer_shot
       turn.display_results
     end
     puts end_game
