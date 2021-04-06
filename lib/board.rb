@@ -45,12 +45,12 @@ class Board
 
   def is_horizontal?(ship, coordinates)
     consecutive?(ship, parse_columns(coordinates)) &&
-    on_axis?(parse_rows(coordinates))
+    matching_coordinate?(parse_rows(coordinates))
   end
 
   def is_vertical?(ship, coordinates)
     consecutive?(ship, parse_rows(coordinates)) &&
-    on_axis?(parse_columns(coordinates))
+    matching_coordinate?(parse_columns(coordinates))
   end
 
   def consecutive?(ship, parsed_coordinates)
@@ -67,7 +67,7 @@ class Board
     consecutive_coordinates.include?(parsed_coordinates)
   end
 
-  def on_axis?(parsed_coordinates)
+  def matching_coordinate?(parsed_coordinates)
     parsed_coordinates.all? { |coordinate| coordinate == parsed_coordinates[0]}
   end
 
@@ -123,5 +123,5 @@ class Board
       end
     end
   end
-  
+
 end

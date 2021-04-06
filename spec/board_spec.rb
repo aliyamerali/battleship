@@ -24,19 +24,6 @@ RSpec.describe Board do
     end
   end
 
-
-  # describe "#initialize" do
-  #   board = Board.new
-  #
-  #   it 'is an instance of Board' do
-  #     expect(board).to be_instance_of(Board)
-  #   end
-  #
-  #   it 'can access cell objects in @cells hash' do
-  #     expect(board.cells["A1"]).to be_instance_of(Cell)
-  #   end
-  # end
-
   describe "#generate_board_hash" do
     board = Board.new
 
@@ -136,17 +123,19 @@ RSpec.describe Board do
     end
   end
 
-  describe "#on_axis?" do
+  describe "#matching_coordinate?" do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
-    it 'returns true if columns do not change' do
-      expect(board.on_axis?([2, 2, 2])).to eq(true)
+    it 'returns true if columns or rows do not change' do
+      expect(board.matching_coordinate?([2, 2, 2])).to eq(true)
+      expect(board.matching_coordinate?(["C", "C", "C"])).to eq(true)
     end
 
-    it 'returns false if rows change' do
-      expect(board.on_axis?(["A", "B", "C"])).to eq(false)
+    it 'returns false if rows or columns change' do
+      expect(board.matching_coordinate?(["A", "B", "C"])).to eq(false)
+      expect(board.matching_coordinate?([3, 4, 5])).to eq(false)
     end
   end
 
