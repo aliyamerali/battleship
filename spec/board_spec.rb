@@ -13,7 +13,6 @@ RSpec.describe Board do
     it 'can access cell objects in @cells hash' do
       expect(board.cells["A1"]).to be_instance_of(Cell)
     end
-
   end
 
   describe "#generate_board_hash" do
@@ -46,7 +45,7 @@ RSpec.describe Board do
     end
 
     it 'returns false for an array of coordinates outside the cells hash' do
-      expect(board.valid_coordinates?(["Z1", "G5", "K6"])).to eq(false)
+      expect(board.valid_coordinates?(["Z1", "G5", "B2"])).to eq(false)
     end
   end
 
@@ -55,12 +54,11 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
-
     it 'returns false when improper coordinates are provided' do
       expect(board.valid_placement?(cruiser, ["A1", "A2", "A3"])).to eq(true)
       expect(board.valid_placement?(cruiser, ["A1", "B1", "C1"])).to eq(true)
       expect(board.valid_placement?(cruiser, ["A3", "A2", "A1"])).to eq(false)
-      expect(board.valid_placement?(cruiser, ["C4", "C3", "C1"])).to eq(false)
+      expect(board.valid_placement?(cruiser, ["C4", "C3", "C2"])).to eq(false)
       expect(board.valid_placement?(submarine, ["D1", "D2"])).to eq(true)
       expect(board.valid_placement?(submarine, ["D2", "D1"])).to eq(false)
     end
@@ -91,13 +89,12 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
 
     it 'returns true if ship is horizontal' do
-      expect(board.is_horizontal?(cruiser, ["A1", "B1", "C1"])).to eq(true)
+      expect(board.is_horizontal?(cruiser, ["A1", "A2", "A3"])).to eq(true)
     end
 
     it 'returns true is ship is vertical' do
-      expect(board.is_vertical?(cruiser, ["B2", "B3", "B4"])).to eq(true)
+      expect(board.is_vertical?(cruiser, ["B2", "C2", "D2"])).to eq(true)
     end
-
   end
 
 
@@ -106,22 +103,28 @@ RSpec.describe Board do
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
-    it 'returns true for consecutive letters on board' do
+    it 'returns true for consecutive numbers or letters on board' do
       expect(board.consecutive?(cruiser, [1, 2, 3])).to eq(true)
+      expect(board.consecutive?(cruiser, ["A", "B", "C"])).to eq(true)
+    end
+
+    it 'returns false for non-consecutive numbers or letters on board' do
+      expect(board.consecutive?(cruiser, [1, 2, 4])).to eq(false)
+      expect(board.consecutive?(cruiser, ["A", "B", "D"])).to eq(false)
     end
   end
 
-  describe "#same?" do
+  describe "#on_axis?" do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
 
     it 'returns true if columns do not change' do
-      expect(board.same?([2, 2, 2])).to eq(true)
+      expect(board.on_axis?([2, 2, 2])).to eq(true)
     end
 
     it 'returns false if rows change' do
-      expect(board.same?(["A", "B", "C"])).to eq(false)
+      expect(board.on_axis?(["A", "B", "C"])).to eq(false)
     end
   end
 
@@ -129,14 +132,15 @@ RSpec.describe Board do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
     submarine = Ship.new("Submarine", 2)
-    coordinates = ["A1", "A2", "A3"]
+    coordinates1 = ["A1", "A2", "A3"]
+    coordinates2 = ["A1", "A2", "A3"]
 
     it 'returns false if no overlap' do
-      expect(board.overlap?(coordinates)).to eq(false)
+      expect(board.overlap?(coordinates1)).to eq(false)
     end
     it 'returns true if there is overlap' do
-      board.place(cruiser, coordinates)
-      expect(board.overlap?(coordinates)).to eq(true)
+      board.place(cruiser, coordinates1)
+      expect(board.overlap?(coordinates2)).to eq(true)
     end
   end
 
@@ -180,13 +184,15 @@ RSpec.describe Board do
       expect(cell_5.ship.name).to eq("Submarine")
     end
 
+    it 'does not place ships on invalid cells' do
+      expect(board.place(submarine, ["C2", "D2"])).to eq(false)
+    end
   end
 
   describe '#render' do
     board = Board.new
     cruiser = Ship.new("Cruiser", 3)
 
-    #TESTING TEMPLATE:   expect{board.render}.to output().to_stdout
     it 'prints an empty board to the screen when called at game start' do
       expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
       expect{board.render(true)}.to output("  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n").to_stdout
@@ -199,7 +205,6 @@ RSpec.describe Board do
 
     it 'prints a board with misses marked' do
       board.cells["B1"].fire_upon
-
       expect{board.render}.to output("  1 2 3 4 \nA . . . . \nB M . . . \nC . . . . \nD . . . . \n").to_stdout
     end
 
