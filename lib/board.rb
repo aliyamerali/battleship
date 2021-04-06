@@ -15,14 +15,12 @@ class Board
   def generate_board_hash
     coordinates = []
     @cells = Hash.new
-
     # Iterate over row and column ranges to concatenate and push into array of coordinates
     @rows.each do |row|
       @columns.each do |column|
         coordinates << row + column.to_s
       end
     end
-
     # We iterate over the coordinates array to populate the cells hash
     coordinates.map do |coordinate|
       @cells[coordinate] = Cell.new(coordinate)
@@ -37,6 +35,56 @@ class Board
   # Helper method to run valid_coordinate? on array of coordinates
   def valid_coordinates?(coordinates)
     coordinates.all? { |coord| valid_coordinate?(coord) }
+  end
+
+  def valid_placement?(ship, coordinates)
+    # Note: Logic only works when coordinates entered from L->R or T->B
+    player_input_valid?(ship, coordinates) &&
+    (is_horizontal?(ship, coordinates) || is_vertical?(ship, coordinates))
+  end
+
+  def player_input_valid?(ship, coordinates)
+    (ship.length == coordinates.count) &&
+    valid_coordinates?(coordinates) &&
+    !overlap?(coordinates)
+  end
+
+  # When columns are consecutive and rows stay the same, placement is horizontal
+  def is_horizontal?(ship, coordinates)
+    consecutive?(ship, parse_columns(coordinates)) &&
+    on_axis?(parse_rows(coordinates))
+  end
+
+  # When rows are consecutive and columns stay the same, placement is is_vertical
+  def is_vertical?(ship, coordinates)
+    consecutive?(ship, parse_rows(coordinates)) &&
+    on_axis?(parse_columns(coordinates))
+  end
+
+  # Helper method is flexible enough to test rows or columns are consecutive
+  def consecutive?(ship, parsed_coordinates)
+    #generate array of arrays of valid rows/cols
+    consecutive_coordinates = []
+
+    @rows.to_a.each_cons(ship.length) do |row|
+      consecutive_coordinates << row
+    end
+
+    @columns.to_a.each_cons(ship.length) do |column|
+      consecutive_coordinates << column
+    end
+
+    consecutive_coordinates.include?(parsed_coordinates)
+  end
+
+  # This method uses the #all? enumerable to check to see
+  # if all parsed coordinates are equal to each other (on the same axis)
+  def on_axis?(parsed_coordinates)
+    parsed_coordinates.all? { |coordinate| coordinate == parsed_coordinates[0]}
+  end
+
+  def overlap?(coordinates)
+    coordinates.any? { |coordinate| @cells[coordinate].ship != nil }
   end
 
   # Helper method to parse coordinates into rows
@@ -57,64 +105,7 @@ class Board
     columns
   end
 
-  # Method checks whether player input valid coordinates,
-  # and the ship's placement was either horizontal or vertical
-  def valid_placement?(ship, coordinates)
-    # Note: Logic only works when coordinates entered from L->R or T->B
-    player_input_valid?(ship, coordinates) &&
-    (is_horizontal?(ship, coordinates) ||
-    is_vertical?(ship, coordinates))
-  end
-
-  # Verifies number of elements is equal to ship length,
-  # all coordinates are on the board and don't overlap existing ships
-  def player_input_valid?(ship, coordinates)
-    (ship.length == coordinates.count) &&
-    valid_coordinates?(coordinates) &&
-    !overlap?(coordinates)
-  end
-
-  # When columns are consecutive and rows stay the same, placement is horizontal
-  def is_horizontal?(ship, coordinates)
-    consecutive?(ship, parse_columns(coordinates)) &&
-    same?(parse_rows(coordinates))
-  end
-
-  # When rows are consecutive and columns stay the same, placement is is_vertical
-  def is_vertical?(ship, coordinates)
-    consecutive?(ship, parse_rows(coordinates)) &&
-    same?(parse_columns(coordinates))
-  end
-
-  def overlap?(coordinates)
-    coordinates.any? { |coordinate| @cells[coordinate].ship != nil }
-  end
-
-  # Helper method is flexible enough to test rows or columns are consecutive
-  def consecutive?(ship, parsed_coordinates)
-    #generate array of arrays of valid rows/cols
-    consecutive_coordinates = []
-
-    @rows.to_a.each_cons(ship.length) do |row|
-      consecutive_coordinates << row
-    end
-
-    @columns.to_a.each_cons(ship.length) do |column|
-      consecutive_coordinates << column
-    end
-
-    consecutive_coordinates.include?(parsed_coordinates)
-  end
-
-  # This method uses the #all? enumerable to check to see
-  # if all parsed coordinates are equal to each other
-  def same?(parsed_coordinates)
-    parsed_coordinates.all? { |coordinate| coordinate == parsed_coordinates[0]}
-  end
-
   def place(ship, coordinates)
-    # iterate over each coordinate pair and #place_ship using @cells hash
-    #Add an all statement here to confirm that all coordiantes pass valid_coordinate
     if valid_placement?(ship, coordinates)
       coordinates.each do |coordinate|
         @cells[coordinate].place_ship(ship)
@@ -145,5 +136,4 @@ class Board
       end
     end
   end
-  # binding.pry
 end

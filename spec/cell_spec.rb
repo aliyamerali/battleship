@@ -15,7 +15,6 @@ RSpec.describe Cell do
       expect(cell.coordinate).to eq("A3")
     end
 
-    # REFACTOR: Add fired_upon? test up here
   end
 
   describe "#empty?" do
@@ -42,14 +41,12 @@ RSpec.describe Cell do
     cell2 = Cell.new("B1")
     ship = Ship.new("Cruiser", 3)
 
-    # REFACTOR: Move test to under #initialize
     it "fired_upon? returns correct boolean" do
       cell1.fire_upon
       expect(cell1.fired_upon?).to eq(true)
       expect(cell2.fired_upon?).to eq(false) # didn't call fire_upon on cell2, so expect false
     end
 
-    # I would think an if/then statement in fire_upon would invoke #hit if ship is on cell
     it "fire_upon reduces ship health" do
       cell2.place_ship(ship)
       cell2.fire_upon
@@ -62,12 +59,12 @@ RSpec.describe Cell do
     cell2 = Cell.new("B1")
     ship = Ship.new("Cruiser", 3)
 
-    it "returns \'S\' if optional true parameter is passed" do
+    it "returns \'S' if optional true parameter is passed" do
       cell2.place_ship(ship)
       expect(cell2.render(true)).to eq("S")
     end
 
-    it "returns \`.`` if a cell has not been fired on" do
+    it "returns \`.` if a cell has not been fired on" do
       expect(cell1.render).to eq(".")
     end
 
@@ -84,7 +81,6 @@ RSpec.describe Cell do
       expect(cell1.render).to eq("H")
     end
 
-    # This test still needs to pass
     it "returns \`X` if a cell has been fired on and its ship has been sunk" do
       cell1.place_ship(ship)
       cell1.fire_upon
