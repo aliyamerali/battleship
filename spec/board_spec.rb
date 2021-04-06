@@ -4,7 +4,7 @@ require './lib/board'
 
 RSpec.describe Board do
   describe "#initialize" do
-    board = Board.new
+    board = Board.new(5)
 
     it 'is an instance of Board' do
       expect(board).to be_instance_of(Board)
@@ -13,7 +13,29 @@ RSpec.describe Board do
     it 'can access cell objects in @cells hash' do
       expect(board.cells["A1"]).to be_instance_of(Cell)
     end
+
+    it 'creates a hash of cells on the board based on input dimension' do
+      expect(board.cells.length).to eq(25)
+    end
+
+    it 'has a default dimension of 4x4' do
+      board2 = Board.new
+      expect(board2.cells.length).to eq(16)
+    end
   end
+
+
+  # describe "#initialize" do
+  #   board = Board.new
+  #
+  #   it 'is an instance of Board' do
+  #     expect(board).to be_instance_of(Board)
+  #   end
+  #
+  #   it 'can access cell objects in @cells hash' do
+  #     expect(board.cells["A1"]).to be_instance_of(Cell)
+  #   end
+  # end
 
   describe "#generate_board_hash" do
     board = Board.new
