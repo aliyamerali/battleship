@@ -61,18 +61,11 @@ class Game
 
   # Validates player's coordinates for ship placement
   def get_player_coordinates(ship)
-    correct = false
-
-    while correct == false
-      print "> "
-      response = gets.chomp.split
-      if @player_board.valid_placement?(ship, response)
-        correct = true
-      else
-        puts "Those are invalid coordinates. Please try again."
-      end
+    response = gets.chomp
+    while @player_board.valid_placement?(ship, response) == false
+      puts "Those are invalid coordinates. Please try again"
+      response = gets.chomp
     end
-    response
   end
 
   #Merali algorithm: Randomly select an anchor point on the Board
