@@ -1,71 +1,71 @@
-# require './lib/turn'
-
 class Game
+  attr_reader :cpu_board, :player_board, :ships
 
   def initialize
     @cpu_board = Board.new
     @player_board = Board.new
-    # Add hash in future as container for ships
-    @player_cruiser = Ship.new("Cruiser", 3)
-    @player_sub = Ship.new("Submarine", 2)
-    @cpu_cruiser = Ship.new("Cruiser", 3)
-    @cpu_sub = Ship.new("Submarine", 2)
+    generate_ships_hash
   end
 
+  def generate_ships_hash
+    @ships = Hash.new
+
+    players = { :player => '', :cpu => '' }
+
+    players.each do |key, value|
+      @ships[key] = {
+        submarine: Ship.new("Submarine", 2),
+        cruiser: Ship.new("Cruiser", 3)
+      }
+    end
+    @ships
+  end
 
   # Randomly chooses which algorithm to generate random coordinates
   # and place ships on computer's board
   def cpu_board_setup
-    generator = rand(2)
+    cpu_cruiser = @ships[:cpu][:cruiser]
+    cpu_sub = @ships[:cpu][:submarine]
     start_time = Time.now
+    branch_decision = rand(2)
 
-    if generator == 0
+    if branch_decision == 0
       algorithm = "Merali's"
-      cruiser_coordinates = merali_algorithm(@cpu_board, @cpu_cruiser)
-      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = merali_algorithm(@cpu_board, @cpu_sub)
-      @cpu_board.place(@cpu_sub, sub_coordinates)
+      @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
     elsif generator == 1
       algorithm = "Griffith's"
-      cruiser_coordinates = griffith_algorithm(@cpu_board, create_coordinate_array(@cpu_board, @cpu_cruiser))
-      @cpu_board.place(@cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = griffith_algorithm(@cpu_board, create_coordinate_array(@cpu_board, @cpu_sub))
-      @cpu_board.place(@cpu_sub, sub_coordinates)
+      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
     end
-
-    sort_time = Time.now - start_time
-    puts "It took me #{sort_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
+    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
   end
 
 
   def player_board_setup
+    cruiser = @ships[:player][:cruiser]
+    sub = @ships[:player_ships][:sub]
+
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
 
     @player_board.render
     puts "Enter the squares for the Cruiser (3 spaces): "
-    @player_board.place(@player_cruiser, get_user_coordinates(@player_cruiser))
-    @player_board.render(true)
+    @player_board.place(cruiser, get_player_coordinates(cruiser))
 
+    @player_board.render(true)
     puts "Enter the squares for the Submarine (2 spaces): "
-    @player_board.place(@player_sub, get_user_coordinates(@player_sub))
+    @player_board.place(sub, get_player_coordinates(sub))
   end
 
 
-  # Validates user's coordinates for ship placement
-  def get_user_coordinates(ship)
-    correct = false
-
-    while correct == false
-      print "> "
-      response = gets.chomp.split
-      if @player_board.valid_placement?(ship, response)
-        correct = true
-      else
-        puts "Those are invalid coordinates. Please try again."
-      end
+  # Validates player's coordinates for ship placement
+  def get_player_coordinates(ship)
+    response = gets.chomp
+    while @player_board.valid_placement?(ship, response) == false
+      puts "Those are invalid coordinates. Please try again"
+      response = gets.chomp
     end
-    response
   end
 
   #Merali algorithm: Randomly select an anchor point on the Board
@@ -81,15 +81,16 @@ class Game
         ship_coordinates = sample_possible_coordinates(board, ship, possible_coordinates)
       end
     end
-    return ship_coordinates
+    ship_coordinates
   end
 
 
   #Helper method to iterate through possible coordinates generated
   def sample_possible_coordinates(board, ship, possible_coordinates)
-    ship_coordinates = possible_coordinates.find do |coordinates|
+    ship_coordinates = possible_coordinates.find_all do |coordinates|
       board.valid_placement?(ship, coordinates)
     end
+    ship_coordinates.sample
   end
 
 
@@ -116,9 +117,11 @@ class Game
   # Given a series of valid consecutive coordinates, rows and columns are added
   # based on a random seed that create an array of arrays of coordinate pairs.
   # These coordinates are validated by checking overlap and then a single coordinate is sampled.
-  def griffith_algorithm(board, coord_array)
+  def griffith_algorithm(board, ship)
     seed = board.columns.to_a.map { |col| col - 1 }.sample # seed is a random num from 0 to col - 1
     coord_pairs = []
+    coord_array = create_coordinate_array(board, ship)
+
     coord_array.each do |array|
       if array[0].is_a? Integer
          coord_pairs << array.map do |coordinate|
@@ -150,29 +153,31 @@ class Game
 
   def play
     #while ships are not sunk, create turn
-    while !cpu_all_ships_sunk? && !player_all_ships_sunk?
+    while !cpu_game_over? && !player_game_over?
       turn = Turn.new(@cpu_board, @player_board)
       turn.display_boards
-      turn.user_shoots
+      turn.player_shoots
       turn.computer_shoots(turn.generate_computer_shot)
       turn.display_results
     end
-    end_game
+    puts end_game
   end
 
   def end_game
-    if cpu_all_ships_sunk?
-      puts "You won!"
-    elsif player_all_ships_sunk?
-      puts "I won!"
+    if cpu_game_over?
+      "You won!"
+    elsif player_game_over?
+      "I won!"
     end
   end
 
-  def cpu_all_ships_sunk?
-    @cpu_sub.sunk? && @cpu_cruiser.sunk?
+  def cpu_game_over?
+    @ships[:cpu][:submarine].sunk? &&
+    @ships[:cpu][:cruiser].sunk?
   end
 
-  def player_all_ships_sunk?
-    @player_sub.sunk? && @player_cruiser.sunk?
+  def player_game_over?
+    @ships[:player][:submarine].sunk? &&
+    @ships[:player][:cruiser].sunk?
   end
 end
