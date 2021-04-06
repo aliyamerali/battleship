@@ -33,7 +33,7 @@ class Game
       algorithm = "Merali's"
       @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
       @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
-    elsif generator == 1
+    elsif branch_decision == 1
       algorithm = "Griffith's"
       @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
       @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
@@ -44,7 +44,7 @@ class Game
 
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
-    sub = @ships[:player_ships][:sub]
+    sub = @ships[:player][:sub]
 
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
