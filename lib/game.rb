@@ -8,20 +8,6 @@ class Game
     generate_ships_hash
   end
 
-  def get_board_dimensions
-    puts "How big a board would you like to play on?"
-    puts "The board will be a square, with dimensions of at least 3x3."
-    puts "Enter an integer dimension for your board:"
-    dimension = gets.chomp.to_i
-
-    while dimension < 3 || dimension.class != Integer
-      puts "That is an invalid dimension."
-      puts "Please enter a single integer value of at least 3."
-      dimension = gets.chomp.to_i
-    end
-    dimension
-  end
-
   def generate_ships_hash
     @ships = Hash.new
 
@@ -36,26 +22,18 @@ class Game
     @ships
   end
 
-  # Randomly chooses which algorithm to generate random coordinates
-  # and place ships on computer's board
-  def cpu_board_setup
-    cpu_cruiser = @ships[:cpu][:cruiser]
-    cpu_sub = @ships[:cpu][:submarine]
-    start_time = Time.now
-    branch_decision = rand(2)
+  def get_board_dimensions
+    puts "How big a board would you like to play on?"
+    puts "The board will be a square, with dimensions of at least 3x3."
+    puts "Enter an integer dimension for your board:"
+    dimension = gets.chomp.to_i
 
-    if branch_decision == 0
-      algorithm = "Merali's"
-      @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
-      @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
-    elsif branch_decision == 1
-      algorithm = "Griffith's"
-      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
-      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
+    while dimension < 3 || dimension.class != Integer
+      puts "That is an invalid dimension. Please enter a single integer value of at least 3."
+      dimension = gets.chomp.to_i
     end
-    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
+    dimension
   end
-
 
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
@@ -77,12 +55,31 @@ class Game
   # Validates player's coordinates for ship placement
   def get_player_coordinates(ship)
     response = gets.chomp.split
-    # require 'pry'; binding.pry
     while @player_board.valid_placement?(ship, response) == false
       puts "Those are invalid coordinates. Please try again"
       response = gets.chomp.split
     end
     response
+  end
+
+  # Randomly chooses which algorithm to generate random coordinates
+  # and place ships on computer's board
+  def cpu_board_setup
+    cpu_cruiser = @ships[:cpu][:cruiser]
+    cpu_sub = @ships[:cpu][:submarine]
+    start_time = Time.now
+    branch_decision = rand(2)
+
+    if branch_decision == 0
+      algorithm = "Merali's"
+      @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
+    elsif branch_decision == 1
+      algorithm = "Griffith's"
+      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
+    end
+    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
   end
 
   #Merali algorithm: Randomly select an anchor point on the Board

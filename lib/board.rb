@@ -115,7 +115,6 @@ class Board
   end
 
   def render(value = false)
-    # print "  1 2 3 4 \n"
     print "  "
     @columns.each do |col|
       print col.to_s + " "

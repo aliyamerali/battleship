@@ -22,15 +22,16 @@ RSpec.describe Game do
     end
   end
 
-  describe '#get_board_dimensions' do
+  # Skipped tests for:
+    # #get_board_dimensions
+    # #player_board_setup
+    # #get_player_coordinates
+  # due to requiring input
 
-  end
 
   # INSERT #cpu_board_setup tests here
   ################
 
-  # Skipped tests for #player_board_setup
-  # and #get_player_coordinates due to requiring input
 
   describe '#merali_algorithm' do
     game = Game.new
@@ -71,17 +72,21 @@ RSpec.describe Game do
 
   # INSERT #sample_possible_coordinates TESTS HERE
   ###########
-
-
-  xdescribe "#generate_random_coordinates" do
-    game = Game.new
-    cpu_board = Board.new
-    ship = Ship.new("cruiser", 3)
-
-    it 'returns array' do
-      expect(game.generate_random_coordinates(cpu_board, starting_array, 1)).to be_instance_of(Array)
-    end
-  end
+  # 
+  # describe "#generate_possible_coordinates and #sample_possible_coordinates" do
+  #   it '#generate_possible_coordinates returns an array of 4 possible coordinate arrays' do
+  #     # game = Game.new
+  #     mock_game = double("game")
+  #     board = Board.new
+  #     ship = Ship.new("cruiser", 3)
+  #     anchor = board.cells.keys.sample
+  #     possible_coordinates = mock_game.generate_possible_coordinates(ship, anchor)
+  #
+  #     expect(possible_coordinates).to be_instance_of(Array)
+  #     expect(possible_coordinates.length).to eq(4)
+  #     # expect(game.sample_possible_coordinates(cpu_board, starting_array, 1)).to be_instance_of(Array)
+  #   end
+  # end
 
 
   describe '#griffith_algorithm' do
