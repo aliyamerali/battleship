@@ -1,8 +1,5 @@
-# require './lib/turn'
-
-
 class Game
-  attr_reader :ships # used for testing
+  attr_reader :cpu_board, :player_board, :ships
 
   def initialize
     @cpu_board = Board.new
@@ -13,10 +10,7 @@ class Game
   def generate_ships_hash
     @ships = Hash.new
 
-    players = {
-      :player => '',
-      :cpu => ''
-    }
+    players = { :player => '', :cpu => '' }
 
     players.each do |key, value|
       @ships[key] = {
@@ -26,10 +20,6 @@ class Game
     end
     @ships
   end
-
-
-
-
 
   # Randomly chooses which algorithm to generate random coordinates
   # and place ships on computer's board
@@ -45,14 +35,10 @@ class Game
       @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
     elsif generator == 1
       algorithm = "Griffith's"
-      cruiser_coordinates = griffith_algorithm(@cpu_board, create_coordinate_array(@cpu_board, cpu_cruiser))
-      @cpu_board.place(cpu_cruiser, cruiser_coordinates)
-      sub_coordinates = griffith_algorithm(@cpu_board, create_coordinate_array(@cpu_board, cpu_sub))
-      @cpu_board.place(cpu_sub, sub_coordinates)
+      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
     end
-
-    sort_time = Time.now - start_time
-    puts "It took me #{sort_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
+    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
   end
 
 
@@ -138,9 +124,11 @@ class Game
   # Given a series of valid consecutive coordinates, rows and columns are added
   # based on a random seed that create an array of arrays of coordinate pairs.
   # These coordinates are validated by checking overlap and then a single coordinate is sampled.
-  def griffith_algorithm(board, coord_array)
+  def griffith_algorithm(board, ship)
     seed = board.columns.to_a.map { |col| col - 1 }.sample # seed is a random num from 0 to col - 1
     coord_pairs = []
+    coord_array = create_coordinate_array(board, ship)
+
     coord_array.each do |array|
       if array[0].is_a? Integer
          coord_pairs << array.map do |coordinate|
