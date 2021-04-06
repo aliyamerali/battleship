@@ -44,7 +44,7 @@ class Game
 
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
-    sub = @ships[:player][:sub]
+    sub = @ships[:player][:submarine]
 
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
@@ -61,11 +61,13 @@ class Game
 
   # Validates player's coordinates for ship placement
   def get_player_coordinates(ship)
-    response = gets.chomp
+    response = gets.chomp.split
+    # require 'pry'; binding.pry
     while @player_board.valid_placement?(ship, response) == false
       puts "Those are invalid coordinates. Please try again"
-      response = gets.chomp
+      response = gets.chomp.split
     end
+    response
   end
 
   #Merali algorithm: Randomly select an anchor point on the Board
