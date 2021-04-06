@@ -19,10 +19,8 @@ class Board
   end
 
   def generate_board_hash
-    coordinates = generate_coordinates
     @cells = Hash.new
-
-    coordinates.map do |coordinate|
+    generate_coordinates.each do |coordinate|
       @cells[coordinate] = Cell.new(coordinate)
     end
     @cells
