@@ -35,7 +35,6 @@ RSpec.describe Cell do
     end
   end
 
-  # These two methods work closely enough together to bundle them in the tests
   describe "#fired_upon? and #fire_upon" do
     cell1 = Cell.new("A3")
     cell2 = Cell.new("B1")
@@ -84,12 +83,9 @@ RSpec.describe Cell do
     it "returns \`X` if a cell has been fired on and its ship has been sunk" do
       cell1.place_ship(ship)
       cell1.fire_upon
-      ship.hit #Shortcut to reduce ship health manually to test sunk #render behavior
-      # Note that #fire_upon was also called in the above test, so only 2 more hits are needed to sink
+      ship.hit
       expect(cell1.render).to eq("X")
     end
 
-
   end
-
 end
