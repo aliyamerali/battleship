@@ -5,7 +5,7 @@ This was a paired coding project used to implement the principles of **Object-Or
 
 ### Bonus Functionality
 In addition to the features implemented in iteration 3, two bonus features were added:
-- When starting a game, a user is be able to indicate the height and width of the board.
+- When starting a game, a user is able to indicate the height and width of the board.
 - The computer makes an educated guess of what coordinate to fire on-- it's actually hard.
 
 ### Demo
