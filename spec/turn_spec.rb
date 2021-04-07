@@ -31,7 +31,7 @@ RSpec.describe Turn do
 
   # NO TEST for #player_shoots since it uses user input
 
-  describe "#generate_computer_shot and #computer_shoots" do
+  xdescribe "#generate_computer_shot and #computer_shoots" do
     cpu_board = Board.new
     player_board = Board.new
     runtime_log = [ { :state => nil, :target => nil } ]

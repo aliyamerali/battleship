@@ -37,7 +37,7 @@ RSpec.describe Board do
     end
   end
 
-  describe "#valid_coordinates?" do
+  xdescribe "#valid_coordinates?" do
     board = Board.new
 
     it 'returns true for an array of coordinates in the cells hash' do

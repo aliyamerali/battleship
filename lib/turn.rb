@@ -35,31 +35,40 @@ attr_accessor :player_shot, :cpu_shot,
     end
   end
 
-  def generate_computer_shot
+  def cpu_firing_procedure
     if @target_mode == true
-      @cpu_shot = targetted_area(@hot_spot, @player_board).sample
-      while @player_board.cells[@cpu_shot].fired_upon?
-        @cpu_shot = targetted_area(@hot_spot, @player_board).sample
-      end
+      cpu_shot_validation(targeted_area(@hot_spot, @player_board))
       computer_shoots(@cpu_shot)
       if @player_board.cells[@hot_spot].render == "X"
-        @target_mode = false
-        @hot_spot = nil
+        deactivate_target_mode
       end
     else
-      @cpu_shot = @player_board.cells.keys.sample
-      while @player_board.cells[@cpu_shot].fired_upon?
-        @cpu_shot = @player_board.cells.keys.sample
-      end
+      cpu_shot_validation(@player_board.cells.keys)
       computer_shoots(@cpu_shot)
       if @player_board.cells[@cpu_shot].render == "H"
-        @target_mode = true
-        @hot_spot = @cpu_shot
+        activate_target_mode
       end
+    end
+  end
+
+  def cpu_shot_validation(target_area)
+    @cpu_shot = target_area.sample
+    while @player_board.cells[@cpu_shot].fired_upon?
+      @cpu_shot = target_area.sample
     end
     @cpu_shot
   end
 
+
+  def activate_target_mode
+    @target_mode = true
+    @hot_spot = @cpu_shot
+  end
+
+  def deactivate_target_mode
+    @target_mode = false
+    @hot_spot = nil
+  end
 
   def save_state
     cpu_state = {
@@ -68,7 +77,7 @@ attr_accessor :player_shot, :cpu_shot,
     }
   end
 
-  def targetted_area(hot_spot, board)
+  def targeted_area(hot_spot, board)
     nearby_coordinates = [
       @hot_spot[0]+(@hot_spot[1].to_i - 1).to_s,
       @hot_spot[0]+(@hot_spot[1].to_i - 2).to_s,
@@ -97,7 +106,7 @@ attr_accessor :player_shot, :cpu_shot,
     puts "Your shot on #{@player_shot} #{status_conversion[@cpu_board.cells[@player_shot].render]}."
     puts "My shot on #{@cpu_shot} #{status_conversion[@player_board.cells[@cpu_shot].render]}."
     if @target_mode == true
-      puts "Targetting systems online."
+      puts "Targeting systems online."
     end
   end
 end

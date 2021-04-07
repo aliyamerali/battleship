@@ -164,7 +164,7 @@ class Game
       turn = Turn.new(@cpu_board, @player_board, runtime_log.last)
       turn.display_boards
       turn.player_shoots
-      turn.generate_computer_shot
+      turn.cpu_firing_procedure
       turn.display_results
       runtime_log << turn.save_state
       #require 'pry'; binding.pry
