@@ -1,17 +1,15 @@
 class Game
   attr_reader :cpu_board, :player_board, :ships
 
-  def initialize
-    @cpu_board = Board.new
-    @player_board = Board.new
+  def initialize(dimension)
+    @cpu_board = Board.new(dimension)
+    @player_board = Board.new(dimension)
     generate_ships_hash
   end
 
   def generate_ships_hash
     @ships = Hash.new
-
     players = { :player => '', :cpu => '' }
-
     players.each do |key, value|
       @ships[key] = {
         submarine: Ship.new("Submarine", 2),
@@ -45,7 +43,6 @@ class Game
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
     sub = @ships[:player][:submarine]
-    #require 'pry'; binding.pry
 
     puts "You now need to lay out your two ships."
     puts "The Cruiser is three units long and the Submarine is two units long."
@@ -59,8 +56,6 @@ class Game
     @player_board.place(sub, get_player_coordinates(sub))
   end
 
-
-  # Validates player's coordinates for ship placement
   def get_player_coordinates(ship)
     response = gets.chomp.split
     while @player_board.valid_placement?(ship, response) == false
@@ -70,10 +65,6 @@ class Game
     response
   end
 
-  #Merali algorithm: Randomly select an anchor point on the Board
-  #Generate a set of 4 possible coordinates based on that anchor point
-  #Sample from these 4 coordinates until a valid set is found; if none is found,
-  #re-sample from the board for a new anchor point
   def merali_algorithm(board, ship)
     ship_coordinates = []
     while !board.valid_placement?(ship, ship_coordinates)
@@ -86,8 +77,6 @@ class Game
     ship_coordinates
   end
 
-
-  #Helper method to iterate through possible coordinates generated
   def sample_possible_coordinates(board, ship, possible_coordinates)
     ship_coordinates = possible_coordinates.find_all do |coordinates|
       board.valid_placement?(ship, coordinates)
@@ -95,8 +84,6 @@ class Game
     ship_coordinates.sample
   end
 
-
-  #Helper method to generate possible coordinates based on an anchor coordinate
   def generate_possible_coordinates(ship, anchor)
     if ship.length == 3
       possible_coordinates = [
@@ -113,14 +100,10 @@ class Game
           [anchor, (anchor[0].ord + 1).chr+anchor[1]]
         ]
     end
-    return possible_coordinates
   end
 
-  # Given a series of valid consecutive coordinates, rows and columns are added
-  # based on a random seed that create an array of arrays of coordinate pairs.
-  # These coordinates are validated by checking overlap and then a single coordinate is sampled.
   def griffith_algorithm(board, ship)
-    seed = board.columns.to_a.map { |col| col - 1 }.sample # seed is a random num from 0 to col - 1
+    seed = board.columns.to_a.map { |col| col - 1 }.sample
     coord_pairs = []
     coord_array = create_coordinate_array(board, ship)
 
@@ -139,9 +122,7 @@ class Game
     validated_coordinates.sample
   end
 
-  # Helper method to be used with #griffith_algorithm
   def create_coordinate_array(board, ship)
-    #generate array of arrays of valid rows/cols
     consecutive_coordinates = []
 
     board.rows.to_a.each_cons(ship.length) do |row|
