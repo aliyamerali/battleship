@@ -2,11 +2,11 @@ class Dimension
 
   def self.get_board_dimensions
     puts "How big a board would you like to play on?"
-    puts "The board will be a square, with dimensions of at least 3x3."
+    puts "The board will be a square, with dimensions of at least 3x3 and no more than 10x10."
     puts "Enter an integer dimension for your board:"
     dimension = gets.chomp.to_i
 
-    while dimension < 3
+    while dimension < 3 || dimension > 10
       puts "That is an invalid dimension. Please enter a single integer value of at least 3."
       dimension = gets.chomp.to_i
     end
