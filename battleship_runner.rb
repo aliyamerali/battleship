@@ -3,6 +3,7 @@ require './lib/cell'
 require './lib/board'
 require './lib/game'
 require './lib/turn'
+require './lib/dimension'
 
 keep_playing = true
 
@@ -14,9 +15,8 @@ while keep_playing == true
 
   puts "Enter p to play. Enter q to quit."
   player_choice = gets.chomp
-
   if player_choice == "p"
-    game = Game.new
+    game = Game.new(Dimension.get_board_dimensions)
     game.cpu_board_setup
     game.player_board_setup
     game.play

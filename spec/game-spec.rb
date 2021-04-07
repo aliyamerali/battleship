@@ -7,7 +7,7 @@ require './lib/turn'
 RSpec.describe Game do
 
   describe '#initialize and #generate_ships_hash' do
-    game = Game.new
+    game = Game.new(4)
     cpu_cruiser = game.ships[:cpu][:cruiser]
     player_sub = game.ships[:player][:submarine]
 
@@ -22,14 +22,28 @@ RSpec.describe Game do
     end
   end
 
-  # INSERT #cpu_board_setup tests here
-  ################
+  # Skipped tests for:
+    # #player_board_setup
+    # #get_player_coordinates
+  # due to requiring input
 
-  # Skipped tests for #player_board_setup
-  # and #get_player_coordinates due to requiring input
+  describe '#cpu_board_setup' do
+    it 'adds two ships to the CPU board' do
+      game = Game.new(4)
+      game.cpu_board_setup
+
+      cells_with_ships = 0
+      game.cpu_board.cells.each do |coordinate, cell|
+        cells_with_ships +=1 if cell.ship != nil
+      end
+
+      expect(cells_with_ships).to eq(5)
+    end
+  end
+
 
   describe '#merali_algorithm' do
-    game = Game.new
+    game = Game.new(4)
     cpu_board = Board.new
     cpu_cruiser = game.ships[:cpu][:cruiser]
     cpu_sub = game.ships[:cpu][:submarine]
@@ -49,12 +63,10 @@ RSpec.describe Game do
       cpu_board.place(cpu_cruiser, test_placement)
       runtime_results = []
 
-      # Run algorithm 100 times and store each coordinate set into runtime_results
       100.times do
         runtime_results << game.merali_algorithm(cpu_board, cpu_sub)
       end
 
-      # If any results in runtime include preexisting coordinates, then returns true
       failed_runs = runtime_results.any? do |coordinates|
         coordinates.include?(coord1)
         coordinates.include?(coord2)
@@ -65,23 +77,25 @@ RSpec.describe Game do
   end
 
 
-  # INSERT #sample_possible_coordinates TESTS HERE
-  ###########
+  describe "#generate_possible_coordinates and #sample_possible_coordinates" do
+    game = Game.new(4)
+    ship = game.ships[:player][:cruiser]
+    anchor = "A1"
+    possible_coordinates = game.generate_possible_coordinates(ship, anchor)
 
+    it '#generate_possible_coordinates returns an array of 4 possible coordinate arrays' do
+      expect(possible_coordinates).to be_instance_of(Array)
+      expect(possible_coordinates.length).to eq(4)
+    end
 
-  xdescribe "#generate_random_coordinates" do
-    game = Game.new
-    cpu_board = Board.new
-    ship = Ship.new("cruiser", 3)
-
-    it 'returns array' do
-      expect(game.generate_random_coordinates(cpu_board, starting_array, 1)).to be_instance_of(Array)
+    it '#sample_possible_coordinates pulls one array from the possible_coordinates array' do
+      expect(game.sample_possible_coordinates(game.player_board, ship, possible_coordinates)).to be_instance_of(Array)
     end
   end
 
 
   describe '#griffith_algorithm' do
-    game = Game.new
+    game = Game.new(4)
     cpu_cruiser = game.ships[:cpu][:cruiser]
     cpu_sub = game.ships[:cpu][:submarine]
 
@@ -99,12 +113,10 @@ RSpec.describe Game do
       game.cpu_board.place(cpu_cruiser, test_placement)
       runtime_results = []
 
-      # Run algorithm 100 times and store each coordinate set into runtime_results
       100.times do
         runtime_results << game.griffith_algorithm(game.cpu_board, cpu_sub)
       end
 
-      # If any results in runtime include preexisting coordinates, then returns true
       failed_runs = runtime_results.any? do |coordinates|
         coordinates.include?(coord1)
         coordinates.include?(coord2)
@@ -115,7 +127,7 @@ RSpec.describe Game do
   end
 
   describe '#create_coordinate_array' do
-    game = Game.new
+    game = Game.new(4)
     cpu_cruiser = game.ships[:cpu][:cruiser]
 
     it 'returns an array of arrays' do
@@ -129,8 +141,8 @@ RSpec.describe Game do
   end
 
   describe '#play and #end_game' do
-    game = Game.new
-    game2 = Game.new
+    game = Game.new(4)
+    game2 = Game.new(4)
     cpu_cruiser = game.ships[:cpu][:cruiser]
     cpu_sub = game.ships[:cpu][:submarine]
 
@@ -158,14 +170,12 @@ RSpec.describe Game do
   end
 
   describe "#cpu_game_over and #player_game_over" do
-    game = Game.new
-    game2 = Game.new
+    game = Game.new(4)
+    game2 = Game.new(4)
     cpu_cruiser = game.ships[:cpu][:cruiser]
     cpu_sub = game.ships[:cpu][:submarine]
 
     it 'returns correct booleans if cpu loses' do
-      #require 'pry'; binding.pry
-
       3.times do
         cpu_cruiser.hit
       end
