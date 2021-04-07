@@ -30,7 +30,7 @@ RSpec.describe Board do
     it 'creates an array of full coordinates from rows and columns' do
       expect(board.generate_coordinates[0]).to eq("A1")
     end
-    
+
     it 'returns @cells hash and is composed of 16 pairs' do
       expect(board.cells).to be_instance_of(Hash)
       expect(board.cells.length).to eq(16)
@@ -50,7 +50,7 @@ RSpec.describe Board do
     end
   end
 
-  xdescribe "#valid_coordinates?" do
+  describe "#valid_coordinates?" do
     board = Board.new
 
     it 'returns true for an array of coordinates in the cells hash' do
