@@ -19,6 +19,26 @@ class Game
     @ships
   end
 
+  # Randomly chooses which algorithm to generate random coordinates
+  # and place ships on computer's board
+  def cpu_board_setup
+    cpu_cruiser = @ships[:cpu][:cruiser]
+    cpu_sub = @ships[:cpu][:submarine]
+    start_time = Time.now
+    branch_decision = rand(2)
+
+    if branch_decision == 0
+      algorithm = "Merali's"
+      @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
+    elsif branch_decision == 1
+      algorithm = "Griffith's"
+      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
+      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
+    end
+    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
+  end
+
 
   def player_board_setup
     cruiser = @ships[:player][:cruiser]
@@ -43,24 +63,6 @@ class Game
       response = gets.chomp.split
     end
     response
-  end
-
-  def cpu_board_setup
-    cpu_cruiser = @ships[:cpu][:cruiser]
-    cpu_sub = @ships[:cpu][:submarine]
-    start_time = Time.now
-    branch_decision = rand(2)
-
-    if branch_decision == 0
-      algorithm = "Merali's"
-      @cpu_board.place(cpu_cruiser, merali_algorithm(@cpu_board, cpu_cruiser))
-      @cpu_board.place(cpu_sub, merali_algorithm(@cpu_board, cpu_sub))
-    elsif branch_decision == 1
-      algorithm = "Griffith's"
-      @cpu_board.place(cpu_cruiser, griffith_algorithm(@cpu_board, cpu_cruiser))
-      @cpu_board.place(cpu_sub, griffith_algorithm(@cpu_board, cpu_sub))
-    end
-    puts "It took me #{Time.now - start_time} seconds to place my two ships according to #{algorithm} algorithm.\n"
   end
 
   def merali_algorithm(board, ship)
@@ -133,12 +135,20 @@ class Game
   end
 
   def play
+    #while ships are not sunk, create turn
+    counter = 0
+    runtime_log = [ {
+      :state => nil,
+      :target => nil
+    } ]
     while !cpu_game_over? && !player_game_over?
-      turn = Turn.new(@cpu_board, @player_board)
+      turn = Turn.new(@cpu_board, @player_board, runtime_log.last)
       turn.display_boards
       turn.player_shoots
-      turn.computer_shoots(turn.generate_computer_shot)
+      turn.cpu_firing_procedure
       turn.display_results
+      runtime_log << turn.save_state
+      #require 'pry'; binding.pry
     end
     puts end_game
   end
@@ -148,6 +158,8 @@ class Game
       "You won!"
     elsif player_game_over?
       "I won!"
+    elsif player_game_over? && cpu_game_over?
+      "The match is a draw!"
     end
   end
 
