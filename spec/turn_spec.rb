@@ -29,8 +29,6 @@ RSpec.describe Turn do
     end
   end
 
-  # NO TEST for #player_shoots since it uses user input
-
   describe "#cpu_firing_procedure and #cpu_shot_validation" do
     cpu_board = Board.new
     player_board = Board.new
