@@ -10,4 +10,5 @@ In addition to the features implemented in iteration 3, two bonus features were 
 
 ### Demo
 Run `ruby battleship_runner.rb` in a Terminal session to play the game:
-![](link)
+
+![](https://github.com/aliyamerali/battleship/blob/5c2612bc97ee33ae16b192f348b7e9a72fe78727/demo/demo.gif)
