@@ -37,7 +37,7 @@ attr_accessor :player_shot, :cpu_shot,
 
   def cpu_firing_procedure
     if @target_mode == true
-      cpu_shot_validation(targeted_area(@hot_spot, @player_board))
+      cpu_shot_validation(targeted_area(@player_board))
       computer_shoots(@cpu_shot)
       if @player_board.cells[@hot_spot].render == "X"
         deactivate_target_mode
@@ -77,7 +77,7 @@ attr_accessor :player_shot, :cpu_shot,
     }
   end
 
-  def targeted_area(hot_spot, board)
+  def targeted_area(board)
     nearby_coordinates = [
       @hot_spot[0]+(@hot_spot[1].to_i - 1).to_s,
       @hot_spot[0]+(@hot_spot[1].to_i - 2).to_s,
