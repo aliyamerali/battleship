@@ -19,8 +19,6 @@ class Game
     @ships
   end
 
-  # Randomly chooses which algorithm to generate random coordinates
-  # and place ships on computer's board
   def cpu_board_setup
     cpu_cruiser = @ships[:cpu][:cruiser]
     cpu_sub = @ships[:cpu][:submarine]
@@ -135,8 +133,6 @@ class Game
   end
 
   def play
-    #while ships are not sunk, create turn
-    counter = 0
     runtime_log = [ {
       :state => nil,
       :target => nil
