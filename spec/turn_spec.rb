@@ -37,18 +37,6 @@ RSpec.describe Turn do
     runtime_log = [ { :state => nil, :target => nil } ]
     turn = Turn.new(cpu_board, player_board, runtime_log.last)
 
-    # it "#generate_computer_shot returns valid cell on the board" do
-    #   shot = turn.generate_computer_shot
-    #   expect(player_board.cells[shot]).to be_instance_of(Cell)
-    # end
-    #
-    # it "#computer_shoots fires upon a given cell" do
-    #   shot = turn.generate_computer_shot
-    #   turn.computer_shoots(shot)
-    #
-    #   expect(player_board.cells[shot].fired_upon?).to eq(true)
-    # end
-
     it "fires upon a cell each time it's called, without repeating shots" do
       16.times do
         turn.cpu_firing_procedure
@@ -83,9 +71,9 @@ RSpec.describe Turn do
       expect(turn.save_state[:target]).to eq(nil)
     end
 
-    xit '#targeted_area' do
-      targeted_area = turn.targeted_area(player_board)
+    it '#targeted_area' do
       turn.hot_spot = "B2"
+      targeted_area = turn.targeted_area(player_board)
       expect(targeted_area).to be_instance_of(Array)
       expect(targeted_area.sort).to eq(["B1", "A2", "B3", "B4", "C2", "D2"].sort)
     end
