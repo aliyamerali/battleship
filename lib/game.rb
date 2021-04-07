@@ -155,12 +155,19 @@ class Game
 
   def play
     #while ships are not sunk, create turn
+    counter = 0
+    runtime_log = [ {
+      :state => nil,
+      :target => nil
+    } ]
     while !cpu_game_over? && !player_game_over?
-      turn = Turn.new(@cpu_board, @player_board)
+      turn = Turn.new(@cpu_board, @player_board, runtime_log.last)
       turn.display_boards
       turn.player_shoots
       turn.generate_computer_shot
       turn.display_results
+      runtime_log << turn.save_state
+      #require 'pry'; binding.pry
     end
     puts end_game
   end
@@ -170,6 +177,8 @@ class Game
       "You won!"
     elsif player_game_over?
       "I won!"
+    elsif player_game_over? && cpu_game_over?
+      "The match is a draw!"
     end
   end
 

@@ -1,12 +1,14 @@
 class Turn
-attr_accessor :player_shot, :cpu_shot #These instance variables were only given
-                                      #attr_accessors for testing purposes
+attr_accessor :player_shot, :cpu_shot,
+              :target_mode, :hot_spot
 
-  def initialize(cpu_board, player_board)
+  def initialize(cpu_board, player_board, cpu_state)
     @cpu_board = cpu_board
     @player_board = player_board
-    @target_mode = false # used for CPU AI
+    @target_mode = cpu_state[:state]
+    @hot_spot = cpu_state[:target]
   end
+
 
   def display_boards
     puts "=============COMPUTER BOARD============="
@@ -35,43 +37,51 @@ attr_accessor :player_shot, :cpu_shot #These instance variables were only given
 
   def generate_computer_shot
     if @target_mode == true
-      require 'pry'; binding.pry
-      puts "Target engaged."
-      @cpu_shot = targetted_area(hot_spot, @player_board).sample
+      @cpu_shot = targetted_area(@hot_spot, @player_board).sample
       while @player_board.cells[@cpu_shot].fired_upon?
-        @cpu_shot = targetted_area(hot_spot, @player_board).sample
+        @cpu_shot = targetted_area(@hot_spot, @player_board).sample
       end
       computer_shoots(@cpu_shot)
-      if @player_board.cells[hot_spot].render == "X"
+      if @player_board.cells[@hot_spot].render == "X"
         @target_mode = false
+        @hot_spot = nil
       end
     else
-      # Shoot randomly on board until a hit
       @cpu_shot = @player_board.cells.keys.sample
       while @player_board.cells[@cpu_shot].fired_upon?
         @cpu_shot = @player_board.cells.keys.sample
       end
       computer_shoots(@cpu_shot)
-      # require 'pry'; binding.pry
       if @player_board.cells[@cpu_shot].render == "H"
         @target_mode = true
-        hot_spot = @cpu_shot
-        require 'pry'; binding.pry
+        @hot_spot = @cpu_shot
       end
     end
+    @cpu_shot
+  end
+
+
+  def save_state
+    cpu_state = {
+      :state => @target_mode,
+      :target => @hot_spot
+    }
   end
 
   def targetted_area(hot_spot, board)
     nearby_coordinates = [
-      [hot_spot, hot_spot[0]+(hot_spot[1].to_i - 1).to_s, hot_spot[0]+(hot_spot[1].to_i - 2).to_s],
-      [hot_spot, hot_spot[0]+(hot_spot[1].to_i + 1).to_s, hot_spot[0]+(hot_spot[1].to_i + 2).to_s],
-      [hot_spot, (hot_spot[0].ord - 1).chr+hot_spot[1], (hot_spot[0].ord - 2).chr+hot_spot[1]],
-      [hot_spot, (hot_spot[0].ord + 1).chr+hot_spot[1], (hot_spot[0].ord + 2).chr+hot_spot[1]]
+      @hot_spot[0]+(@hot_spot[1].to_i - 1).to_s,
+      @hot_spot[0]+(@hot_spot[1].to_i - 2).to_s,
+      @hot_spot[0]+(@hot_spot[1].to_i + 1).to_s,
+      @hot_spot[0]+(@hot_spot[1].to_i + 2).to_s,
+      (@hot_spot[0].ord - 1).chr+@hot_spot[1],
+      (@hot_spot[0].ord - 2).chr+@hot_spot[1],
+      (@hot_spot[0].ord + 1).chr+@hot_spot[1],
+      (@hot_spot[0].ord + 2).chr+@hot_spot[1]
     ]
-    ship_coordinates = nearby_coordinates.find_all do |coordinates|
-      board.valid_coordinates?(coordinates)
+    nearby_coordinates.find_all do |coordinate|
+      board.valid_coordinate?(coordinate)
     end
-    ship_coordinates
   end
 
   def computer_shoots(shot)
@@ -86,5 +96,8 @@ attr_accessor :player_shot, :cpu_shot #These instance variables were only given
     }
     puts "Your shot on #{@player_shot} #{status_conversion[@cpu_board.cells[@player_shot].render]}."
     puts "My shot on #{@cpu_shot} #{status_conversion[@player_board.cells[@cpu_shot].render]}."
+    if @target_mode == true
+      puts "Targetting systems online."
+    end
   end
 end

@@ -8,7 +8,8 @@ RSpec.describe Turn do
   describe "#initialize" do
     cpu_board = Board.new
     player_board = Board.new
-    turn = Turn.new(cpu_board, player_board)
+    runtime_log = [ { :state => nil, :target => nil } ]
+    turn = Turn.new(cpu_board, player_board, runtime_log.last)
 
     it "exists" do
       expect(turn).to be_instance_of(Turn)
@@ -18,8 +19,9 @@ RSpec.describe Turn do
   describe "#display_boards" do
     cpu_board = Board.new
     player_board = Board.new
-    turn = Turn.new(cpu_board, player_board)
     cruiser = Ship.new("Cruiser", 3)
+    runtime_log = [ { :state => nil, :target => nil } ]
+    turn = Turn.new(cpu_board, player_board, runtime_log.last)
 
     it "prints a board that shows 'S' for player boards" do
       player_board.place(cruiser, ["A1", "A2", "A3"])
@@ -29,10 +31,11 @@ RSpec.describe Turn do
 
   # NO TEST for #player_shoots since it uses user input
 
-  xdescribe "#generate_computer_shot and #computer_shoots" do
+  describe "#generate_computer_shot and #computer_shoots" do
     cpu_board = Board.new
     player_board = Board.new
-    turn = Turn.new(cpu_board, player_board)
+    runtime_log = [ { :state => nil, :target => nil } ]
+    turn = Turn.new(cpu_board, player_board, runtime_log.last)
 
     it "#generate_computer_shot returns valid cell on the board" do
       shot = turn.generate_computer_shot
@@ -46,10 +49,9 @@ RSpec.describe Turn do
       expect(player_board.cells[shot].fired_upon?).to eq(true)
     end
 
-    it "#generate_computer_shot does not return a cell that has been fired upon" do
+    xit "#generate_computer_shot does not return a cell that has been fired upon" do
       15.times do
-        shot = turn.generate_computer_shot
-        turn.computer_shoots(shot)
+        turn.generate_computer_shot
       end
       expected = player_board.cells.all? do |key, value|
         value.fired_upon? == true
@@ -62,13 +64,14 @@ RSpec.describe Turn do
   describe "#display_results" do
     cpu_board = Board.new
     player_board = Board.new
-    turn = Turn.new(cpu_board, player_board)
-    turn.player_shot = "A1"
-    cpu_board.cells[turn.player_shot].fire_upon
-    turn.cpu_shot = "D1"
-    player_board.cells[turn.cpu_shot].fire_upon
+    runtime_log = [ { :state => nil, :target => nil } ]
+    turn = Turn.new(cpu_board, player_board, runtime_log.last)
 
     it "prints turn results accurately for player and computer" do
+      turn.player_shot = "A1"
+      cpu_board.cells[turn.player_shot].fire_upon
+      turn.cpu_shot = "D1"
+      player_board.cells[turn.cpu_shot].fire_upon
       expect{turn.display_results}.to output("Your shot on A1 was a miss.\nMy shot on D1 was a miss.\n").to_stdout
     end
 

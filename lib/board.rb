@@ -111,7 +111,6 @@ class Board
         @cells[coordinate].place_ship(ship)
       end
     else
-      puts "There has been an error in ship placement!"
       false
     end
   end
